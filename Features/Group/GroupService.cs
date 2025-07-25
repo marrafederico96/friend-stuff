@@ -78,4 +78,19 @@ public class GroupService(FriendStuffDbContext context, UserManager<User> userMa
 
         return result;
     }
+
+    public async Task<GroupInfoDto> GetGroup(string groupName)
+    {
+        var group = await context.UserGroups
+            .Where(g => g.NormalizeGroupName.Equals(groupName.TrimEnd().TrimStart().ToLowerInvariant()))
+            .Include(userGroup => userGroup.GroupUsers)
+            .FirstOrDefaultAsync() ?? throw new ArgumentException("Group not found");
+
+        var groupInfoDto = new GroupInfoDto
+        {
+            GroupName = group.GroupName,
+            Members = group.GroupUsers.ToList()
+        };
+        return groupInfoDto;
+    }
 }

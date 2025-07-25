@@ -21,9 +21,15 @@ public interface IGroupService
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="usernameDto"></param>
+    /// <param name="username"></param>
     /// <returns></returns>
     public Task<List<GroupInfoDto>> GetGroupInfo(string username);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="groupName"></param>
+    /// <returns></returns>
+    public Task<GroupInfoDto> GetGroup(string groupName);
 
 }

@@ -16,12 +16,15 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
+
 <Header UserInfo="@UserInfo"></Header>
 
 <CascadingValue Value="UserInfo" Name="UserInfo">
-    <MudContainer MaxWidth="MaxWidth.Large">
-        @Body
-    </MudContainer>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large">
+            @Body
+        </MudContainer>
+    </MudMainContent>
 </CascadingValue>
 
 
