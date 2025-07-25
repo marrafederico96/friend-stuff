@@ -7,14 +7,14 @@
 
 @rendermode  InteractiveServer
 
-<MudForm Model="GroupData" FormName="GroupForm" OnValidSubmit="Submit">
-    <MudTextField Class="mb-2" Name="Email" T="string" Label="Group Name" Required="true" RequiredError="Group Name is required!" />
+<EditForm Model="GroupData" FormName="GroupForm" OnValidSubmit="Submit">
+    <MudTextField @bind-Value="GroupData.GroupName" Class="mb-2" T="string" Label="Group Name" Required="true" RequiredError="Group Name is required!" />
     @if (!string.IsNullOrEmpty(_error))
     {
-        <p>@_error</p>
+        <MudText>@_error</MudText>
     } 
     <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Create Group</MudButton>
-</MudForm>
+</EditForm>
 
 @code {
     private GroupDto GroupData { get; set; } = new GroupDto();
