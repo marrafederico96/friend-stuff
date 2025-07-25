@@ -61,7 +61,7 @@ public class GroupService(FriendStuffDbContext context, UserManager<User> userMa
         var user = await context.Users
             .Include(u => u.UserGroups)
             .ThenInclude(g => g.Group).ThenInclude(userGroup => userGroup.GroupUsers)
-            .FirstOrDefaultAsync() ?? throw new ArgumentException("User not found");
+            .FirstOrDefaultAsync(u => u.UserName == username) ?? throw new ArgumentException("User not found");
 
         var groups = user.UserGroups.ToList();
 
