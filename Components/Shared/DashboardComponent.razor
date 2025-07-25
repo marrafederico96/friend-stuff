@@ -1,0 +1,62 @@
+﻿@using FriendStuff.Features.Auth.DTOs
+@using FriendStuff.Features.Group
+@using FriendStuff.Features.Group.DTOs
+
+@inject IGroupService GroupService
+
+<h2 style="margin: 20px 0; font-size: 1.8rem;">Dashboard</h2>
+<h3 style="margin: 20px 0;">Your Groups</h3>
+
+<MudGrid Spacing="@Spacing" Justify="Justify.FlexStart">
+    @if (GroupInfo is { Count: > 0 })
+    {
+        @foreach (var group in GroupInfo)
+        {
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <MudPaper>
+                    <MudButton Style="width: 100%; justify-content: flex-start; align-items: flex-start;" Href="@($"/Group/{group.GroupName}")">
+                        <div style="display: flex; flex-direction: column;">
+                        <MudText>@group.GroupName</MudText>
+                        <MudText>Members: @group.Members.Count</MudText>
+                        </div>
+                    </MudButton>
+                </MudPaper>
+            </MudItem>
+        }
+    }
+    else
+    {
+        <MudItem xs="12">
+            <MudText>No Groups found</MudText>
+        </MudItem>
+    }
+    <MudFlexBreak />
+    <MudItem>
+        <GroupFormComponent UserInfo="@UserInfo" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int Spacing { get; set; } = 6;
+
+    [CascadingParameter(Name = "UserInfo")]
+    public UserInfoDto? UserInfo { get; set; }
+
+    private List<GroupInfoDto>? GroupInfo { get; set; }
+    private string? _error = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            if (UserInfo != null)
+            {
+                GroupInfo = await GroupService.GetGroupInfo(UserInfo.Username);
+            }
+        }
+        catch (Exception)
+        {
+            _error = "No groups found";
+        }
+    }
+}

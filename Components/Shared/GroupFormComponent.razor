@@ -1,0 +1,44 @@
+@using FriendStuff.Features.Auth.DTOs
+@using FriendStuff.Features.Group
+@using FriendStuff.Features.Group.DTOs
+
+@inject IGroupService GroupService
+@inject NavigationManager NavigationManager
+
+@rendermode  InteractiveServer
+
+<MudForm Model="GroupData" FormName="GroupForm" OnValidSubmit="Submit">
+    <MudTextField Class="mb-2" Name="Email" T="string" Label="Group Name" Required="true" RequiredError="Group Name is required!" />
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <p>@_error</p>
+    } 
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Create Group</MudButton>
+</MudForm>
+
+@code {
+    private GroupDto GroupData { get; set; } = new GroupDto();
+    private string? _error = string.Empty;
+    
+    [Parameter]
+    public UserInfoDto? UserInfo { get; set; }
+    
+    private async Task Submit()
+    {
+        try
+        {
+            if (UserInfo != null)
+            {
+                GroupData.AdminUsername = UserInfo.Username;
+            }
+            await GroupService.CreateGroup(GroupData);
+            GroupData = new GroupDto();
+            NavigationManager.NavigateTo("/", forceLoad:true);
+        }
+        catch (ArgumentException e)
+        {
+            _error = e.Message;
+        }
+        
+    }
+}

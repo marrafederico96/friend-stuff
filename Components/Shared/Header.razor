@@ -1,20 +1,21 @@
 ﻿@using FriendStuff.Features.Auth.DTOs;
 
 
-<header>
-    <h1>Friend Stuff</h1>
+<MudAppBar Fixed="false">
+    <MudText>Friend Stuff</MudText>
+    <MudSpacer />
     <nav>
         @if (UserInfo != null)
         {
-            <a href="#">@UserInfo.Username</a>
+            <MudButton Href="#" Variant="Variant.Text" Color="Color.Primary">@UserInfo.Username</MudButton>
         }
         else
         {
-            <a href="/Account/Register">Register</a>
-            <a href="/Account/Login">Login</a>
+            <MudButton Href="/Account/Register" Variant="Variant.Text" Color="Color.Primary">Register</MudButton>
+            <MudButton Href="/Account/Login" Variant="Variant.Text" Color="Color.Primary">Login</MudButton>
         }
     </nav>
-</header>
+</MudAppBar>
 
 @code {
     [Parameter]

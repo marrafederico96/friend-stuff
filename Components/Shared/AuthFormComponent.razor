@@ -1,0 +1,91 @@
+﻿@using FriendStuff.Features.Auth
+@using FriendStuff.Features.Auth.DTOs
+
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<div class="form-container">
+    @if (_isLogin)
+    {
+        <MudPaper Class="pa-4" Style="width: 350px;">
+            <form method="post" action="/Account/Login">
+                <h2>Login</h2>
+                <MudTextField Class="mb-2" Name="Email" T="string" Label="Email" Required="true" RequiredError="Email is required!" />
+                <MudTextField Class="mb-2" Name="Password" T="string" Label="Password" InputType="InputType.Password" Required="true" RequiredError="Password is required!" />
+                @if (!string.IsNullOrEmpty(Error))
+                {
+                    <MudText Style="color: #f64e62" Class="mt-2 mb-2">@Error</MudText>
+                }
+                <MudButton Style="width: 100%; margin-top: 5px;" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
+                <MudText Class="mt-2">New user? <a href="/Account/Register">Register</a></MudText>
+            </form>
+        </MudPaper>
+    }
+    else
+    {
+        <MudPaper Class="pa-4" Style="width: 350px;">
+            <EditForm Model="RegisterData" OnValidSubmit="Register" FormName="RegisterForm">
+                <DataAnnotationsValidator />
+                <h2>Register</h2>
+                <MudTextField Class="mb-2" @bind-Value="RegisterData.FirstName" T="string" Label="First Name" Required="true" RequiredError="First Name is required!"/>
+                <MudTextField Class="mb-2" @bind-Value="RegisterData.LastName" T="string" Label="Last Name" Required="true" RequiredError="Last Name is required!"/>
+                <MudTextField Class="mb-2" @bind-Value="RegisterData.Username" T="string" Label="Username" Required="true" RequiredError="Username is required!"/>
+                <MudTextField Class="mb-2" @bind-Value="RegisterData.Email" T="string" Label="Email" Required="true" RequiredError="Email is required!"/>
+                <MudTextField Class="mb-2" @bind-Value="RegisterData.Password" T="string" Label="Password" InputType="InputType.Password" Required="true" RequiredError="Password is required!"/>
+                <MudTextField Class="mb-2" @bind-Value="RegisterData.ConfirmPassword" T="string" Label="Confirm Password" InputType="InputType.Password" Required="true" RequiredError="Confirm Password is required!"/>
+
+                @if (!string.IsNullOrEmpty(_error))
+                {
+                    <MudText Style="color: #f64e62" Class="mb-2 mt-2">@Error</MudText>
+                }
+                <MudButton Style="width: 100%;  margin-top: 5px;" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" type="submit">Register</MudButton>
+                <MudText Class="mt-2">Already register? <a href="/Account/Login">Login</a></MudText>
+            </EditForm>
+            </MudPaper>
+
+    }
+</div>
+@code {
+    [Parameter]
+    public string? Mode { get; set; }
+
+    private bool _isLogin;
+
+    [SupplyParameterFromForm(Name = "RegisterForm")]
+    private RegisterDto RegisterData { get; set; } = new RegisterDto();
+
+    [SupplyParameterFromForm]
+    private LoginDto LoginData { get; set; } = new LoginDto();
+
+    private string? _error = string.Empty;
+
+    [SupplyParameterFromQuery]
+    public string? Error { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        _isLogin = string.Equals(Mode, "Login", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task Register()
+    {
+        try
+        {
+            await AuthService.RegisterUser(RegisterData);
+            RegisterData = new RegisterDto();
+            NavigationManager.NavigateTo("/Account/Login", forceLoad: true);
+        }
+        catch (ArgumentException e)
+        {
+            _error = e.Message;
+        }
+        catch (Exception)
+        {
+            _error = "Internal error. Try again.";
+        }
+    }
+
+
+}

@@ -9,32 +9,35 @@
 @inherits LayoutComponentBase
 
 @inject IAuthService AuthService
-@inject IGroupService GroupService
 @inject AuthenticationStateProvider AuthenticationStateProvider
+
+<MudThemeProvider IsDarkMode="true"/> 
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
 <Header UserInfo="@UserInfo"></Header>
 
 <CascadingValue Value="UserInfo" Name="UserInfo">
-    <CascadingValue Value="GroupInfo" Name="GroupInfo">
-        <main class="container">
-            @Body
-        </main>
-    </CascadingValue>
+    <MudContainer MaxWidth="MaxWidth.Large">
+        @Body
+    </MudContainer>
 </CascadingValue>
+
+
 
 @code {
     UserInfoDto? UserInfo { get; set; }
     List<GroupInfoDto>? GroupInfo { get; set; }
-    private ClaimsPrincipal? user;
+    private ClaimsPrincipal? _user;
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        user = authState.User;
+        _user = authState.User;
 
-        if (user.Identity != null && user.Identity.Name != null && user.Identity.IsAuthenticated)
+        if (_user.Identity is { Name: not null, IsAuthenticated: true })
         {
-            UserInfo = await AuthService.GetUserInfo(user.Identity.Name);
-            GroupInfo = await GroupService.GetGroupInfo(user.Identity.Name);
+            UserInfo = await AuthService.GetUserInfo(_user.Identity.Name);
         }
     }
 
