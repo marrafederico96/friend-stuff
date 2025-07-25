@@ -14,7 +14,7 @@
         {
             <MudItem xs="12" sm="6" md="4" lg="3">
                 <MudPaper>
-                    <MudButton Style="width: 100%; justify-content: flex-start; align-items: flex-start;" Href="@($"/Group/{@group.GroupName}")">
+                    <MudButton Style="width: 100%; justify-content: flex-start; align-items: flex-start;" Href="@GenerateGroupHref(group.GroupName)">
                         <div style="display: flex; flex-direction: column;">
                         <MudText>@group.GroupName</MudText>
                         <MudText>Members: @group.Members.Count</MudText>
@@ -58,5 +58,19 @@
         {
             _error = "No groups found";
         }
+    }
+    
+    private string GenerateGroupHref(string groupName)
+    {
+        if (string.IsNullOrWhiteSpace(groupName))
+            return string.Empty;
+
+        var cleaned = new string(groupName
+            .ToLowerInvariant()
+            .Replace(" ", "-")
+            .Where(c => char.IsLetterOrDigit(c) || c == '-')
+            .ToArray());
+
+        return $"/Group/{cleaned}";
     }
 }
