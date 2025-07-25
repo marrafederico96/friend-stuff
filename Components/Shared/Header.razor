@@ -1,0 +1,22 @@
+﻿@using FriendStuff.Features.Auth.DTOs;
+
+
+<header>
+    <h1>Friend Stuff</h1>
+    <nav>
+        @if (UserInfo != null)
+        {
+            <a href="#">@UserInfo.Username</a>
+        }
+        else
+        {
+            <a href="/Account/Register">Register</a>
+            <a href="/Account/Login">Login</a>
+        }
+    </nav>
+</header>
+
+@code {
+    [Parameter]
+    public UserInfoDto? UserInfo { get; set; }
+}

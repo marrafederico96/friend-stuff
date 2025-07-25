@@ -1,0 +1,10 @@
+﻿@page "/Account/{mode}"
+@using FriendStuff.Components.Shared
+
+
+<AuthForm Mode="@Mode" />
+
+@code {
+    [Parameter]
+    public string? Mode { get; set; }
+}

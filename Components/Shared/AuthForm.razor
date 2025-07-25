@@ -1,0 +1,116 @@
+﻿@using FriendStuff.Features.Auth
+@using FriendStuff.Features.Auth.DTOs
+
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@inject IHttpContextAccessor HttpContextAccessor
+
+@rendermode InteractiveServer
+
+<div class="form-container">
+    @if (_isLogin)
+    {
+        <form method="post" action="Account/Login">
+            <h2>Register</h2>
+            <hr />
+            <div>
+                <label>Email</label>
+                <input name="Email" type="email" placeholder="Email" />
+            </div>
+            <div>
+                <label>Password</label>
+                <input name="Password" type="password" placeholder="Password" />
+            </div>
+            @if (!string.IsNullOrEmpty(Error))
+            {
+                <div class="error">
+                    @Error
+                </div>
+            }
+            <button type="submit">Login</button>
+            <p class="link-form">New user? <a href="/Account/Register">Register</a></p>
+        </form>
+    }
+    else
+    {
+        <EditForm Model="_registerData" OnValidSubmit="Register" FormName="RegisterForm">
+            <DataAnnotationsValidator />
+            <h2>Register</h2>
+            <hr />
+            <div>
+                <label>First Name</label>
+                <InputText @bind-Value="_registerData.FirstName" placeholder="First Name" />
+            </div>
+            <div>
+                <label>Last Name</label>
+                <InputText @bind-Value="_registerData.LastName" placeholder="Last Name" />
+            </div>
+            <div>
+                <label>Username</label>
+                <InputText @bind-Value="_registerData.Username" placeholder="Username" />
+            </div>
+            <div>
+                <label>Email</label>
+                <InputText @bind-Value="_registerData.Email" type="email" placeholder="Email" />
+            </div>
+            <div>
+                <label>Password</label>
+                <InputText @bind-Value="_registerData.Password" type="password" placeholder="Password" />
+            </div>
+            <div>
+                <label>Confirm Password</label>
+                <InputText @bind-Value="_registerData.ConfirmPassword" type="password" placeholder="Confirm Password" />
+            </div>
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <div class="error">
+                    @_error
+                </div>
+            }
+            <button type="submit">Register</button>
+            <p class="link-form">Already register? <a href="/Account/Login">Login</a></p>
+        </EditForm>
+    }
+</div>
+@code {
+    [Parameter]
+    public string? Mode { get; set; }
+
+    private bool _isLogin;
+
+    [SupplyParameterFromForm(Name = "RegisterForm")]
+    private RegisterDto _registerData { get; set; } = new RegisterDto();
+
+    [SupplyParameterFromForm]
+    private LoginDto _loginData { get; set; } = new LoginDto();
+
+    private string? _error = string.Empty;
+
+    [SupplyParameterFromQuery]
+    public string? Error { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        _isLogin = string.Equals(Mode, "Login", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task Register()
+    {
+        try
+        {
+            await AuthService.RegisterUser(_registerData);
+            _registerData = new RegisterDto();
+            NavigationManager.NavigateTo("/Account/Login", forceLoad: true);
+        }
+        catch (ArgumentException e)
+        {
+            _error = e.Message;
+        }
+        catch (Exception)
+        {
+            _error = "Internal error. Try again.";
+        }
+    }
+
+
+}

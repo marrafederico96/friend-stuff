@@ -1,0 +1,38 @@
+﻿@using FriendStuff.Features.Auth.DTOs;
+@using FriendStuff.Features.Group.DTOs;
+
+<h2>Dashboard</h2>
+<hr style="width: 100%; margin-bottom: 20px;"/>
+<section>
+    <div class="container-info">
+        <h3>Your Groups</h3>
+        <div>
+            @if (GroupInfo != null && GroupInfo.Count > 0)
+            {
+                @foreach (var group in GroupInfo)
+                {
+                    <a href="/Group/@group.GroupName">
+                        <p>@group.GroupName</p>
+                        <p>Members: @group.Members.Count</p>
+                    </a>
+                }
+            }
+            else
+            {
+                <p>No Groups found</p>
+            }
+        </div>
+        <div>
+            <h3>Balance</h3>
+        </div>
+    </div>
+</section>
+
+@code {
+
+    [CascadingParameter(Name = "UserInfo")]
+    public UserInfoDto? UserInfo { get; set; }
+    [CascadingParameter(Name = "GroupInfo")]
+    private List<GroupInfoDto>? GroupInfo { get; set; }
+
+}

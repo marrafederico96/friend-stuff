@@ -1,0 +1,41 @@
+﻿@using FriendStuff.Components.Shared
+@using FriendStuff.Features.Auth
+@using FriendStuff.Features.Auth.DTOs;
+@using FriendStuff.Features.Group
+@using Microsoft.AspNetCore.Components.Authorization;
+@using System.Security.Claims
+@using FriendStuff.Features.Group.DTOs;
+
+@inherits LayoutComponentBase
+
+@inject IAuthService AuthService
+@inject IGroupService GroupService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<Header UserInfo="@UserInfo"></Header>
+
+<CascadingValue Value="UserInfo" Name="UserInfo">
+    <CascadingValue Value="GroupInfo" Name="GroupInfo">
+        <main class="container">
+            @Body
+        </main>
+    </CascadingValue>
+</CascadingValue>
+
+@code {
+    UserInfoDto? UserInfo { get; set; }
+    List<GroupInfoDto>? GroupInfo { get; set; }
+    private ClaimsPrincipal? user;
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        user = authState.User;
+
+        if (user.Identity != null && user.Identity.Name != null && user.Identity.IsAuthenticated)
+        {
+            UserInfo = await AuthService.GetUserInfo(user.Identity.Name);
+            GroupInfo = await GroupService.GetGroupInfo(user.Identity.Name);
+        }
+    }
+
+}
