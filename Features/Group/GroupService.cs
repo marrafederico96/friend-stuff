@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using FriendStuff.Data;
 using FriendStuff.Domain.Entities;
 using FriendStuff.Domain.Entities.Enums;
@@ -8,17 +9,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FriendStuff.Features.Group;
 
-public class GroupService(FriendStuffDbContext context, UserManager<User> userManager) : IGroupService
+public partial class GroupService(FriendStuffDbContext context, UserManager<User> userManager) : IGroupService
 {
+    [GeneratedRegex(@"\s+")]
+    private static partial Regex WhitespaceRegex();
+
+    [GeneratedRegex(@"[^a-z0-9\-]")]
+    private static partial Regex InvalidCharsRegex();
     public async Task CreateGroup(GroupDto groupDto)
     {
         var admin = await userManager.FindByNameAsync(groupDto.AdminUsername)
                     ?? throw new ArgumentException("Admin not found");
 
+         
+        
         UserGroup newGroup = new()
         {
             GroupName = groupDto.GroupName,
-            NormalizeGroupName = groupDto.GroupName.TrimEnd().TrimStart().ToLowerInvariant(),
+            NormalizeGroupName = NormalizeGroupName(groupDto.GroupName),
             CreatedAt = DateTime.UtcNow,
             AdminId = admin.Id,
         };
@@ -82,7 +90,7 @@ public class GroupService(FriendStuffDbContext context, UserManager<User> userMa
     public async Task<GroupInfoDto> GetGroup(string groupName)
     {
         var group = await context.UserGroups
-            .Where(g => g.NormalizeGroupName.Equals(groupName.TrimEnd().TrimStart().ToLowerInvariant()))
+            .Where(g => g.NormalizeGroupName.Equals(NormalizeGroupName(groupName)))
             .Include(userGroup => userGroup.GroupUsers)
             .FirstOrDefaultAsync() ?? throw new ArgumentException("Group not found");
 
@@ -92,5 +100,17 @@ public class GroupService(FriendStuffDbContext context, UserManager<User> userMa
             Members = group.GroupUsers.ToList()
         };
         return groupInfoDto;
+    }
+    
+    private string NormalizeGroupName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return string.Empty;
+
+        var trimmed = name.TrimEnd().TrimStart().ToLowerInvariant();
+        trimmed =  WhitespaceRegex().Replace(trimmed, "-");
+        trimmed = InvalidCharsRegex().Replace(trimmed, "");
+
+        return trimmed;
     }
 }

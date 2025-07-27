@@ -9,41 +9,53 @@
 <div class="form-container">
     @if (_isLogin)
     {
-        <MudPaper Class="pa-4" Style="width: 350px;">
             <form method="post" action="/Account/Login">
                 <h2>Login</h2>
-                <MudTextField Class="mb-2" Name="Email" T="string" Label="Email" Required="true" RequiredError="Email is required!" />
-                <MudTextField Class="mb-2" Name="Password" T="string" Label="Password" InputType="InputType.Password" Required="true" RequiredError="Password is required!" />
+                <label>Email:
+                    <input  Name="Email" type="text" placeholder="Email" required />
+                    </label>
+                <label>Password:
+                    <input Name="Password"  required type="password" placeholder="Password" />
+                    </label>
                 @if (!string.IsNullOrEmpty(Error))
                 {
-                    <MudText Style="color: #f64e62" Class="mt-2 mb-2">@Error</MudText>
+                    <p>@Error</p>
                 }
-                <MudButton Style="width: 100%; margin-top: 5px;" ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Class="ml-auto">Login</MudButton>
-                <MudText Class="mt-2">New user? <a href="/Account/Register">Register</a></MudText>
+                <button>Login</button>
+                <p>New user? <a href="/Account/Register">Register</a></p>
             </form>
-        </MudPaper>
     }
     else
     {
-        <MudPaper Class="pa-4" Style="width: 350px;">
             <EditForm Model="RegisterData" OnValidSubmit="Register" FormName="RegisterForm">
                 <DataAnnotationsValidator />
                 <h2>Register</h2>
-                <MudTextField Class="mb-2" @bind-Value="RegisterData.FirstName" T="string" Label="First Name" Required="true" RequiredError="First Name is required!"/>
-                <MudTextField Class="mb-2" @bind-Value="RegisterData.LastName" T="string" Label="Last Name" Required="true" RequiredError="Last Name is required!"/>
-                <MudTextField Class="mb-2" @bind-Value="RegisterData.Username" T="string" Label="Username" Required="true" RequiredError="Username is required!"/>
-                <MudTextField Class="mb-2" @bind-Value="RegisterData.Email" T="string" Label="Email" Required="true" RequiredError="Email is required!"/>
-                <MudTextField Class="mb-2" @bind-Value="RegisterData.Password" T="string" Label="Password" InputType="InputType.Password" Required="true" RequiredError="Password is required!"/>
-                <MudTextField Class="mb-2" @bind-Value="RegisterData.ConfirmPassword" T="string" Label="Confirm Password" InputType="InputType.Password" Required="true" RequiredError="Confirm Password is required!"/>
-
+                <label>First Name:
+                    <InputText type="text" @bind-Value="RegisterData.FirstName" required placeholder="First Name"/>
+                </label>
+                <label>Last Name:
+                    <InputText type="text" @bind-Value="RegisterData.LastName" required placeholder="Last Name"/>
+                </label>
+                <label>Username:
+                    <InputText type="text" @bind-Value="RegisterData.Username" required placeholder="Username" />
+                </label>
+                <label>Email:
+                    <InputText type="email" @bind-Value="RegisterData.Email" required placeholder="Email"/>
+                </label>
+                <label>Password:
+                    <InputText type="password" @bind-Value="RegisterData.Password" required placeholder="Password"/>
+                </label>
+                <label>Confirm Password:
+                    <InputText type="password" @bind-Value="RegisterData.ConfirmPassword" required  placeholder="Confirm Password"/>
+                </label>
+                
                 @if (!string.IsNullOrEmpty(_error))
                 {
-                    <MudText Style="color: #f64e62" Class="mb-2 mt-2">@Error</MudText>
+                    <p>@Error</p>
                 }
-                <MudButton Style="width: 100%;  margin-top: 5px;" ButtonType="ButtonType.Submit" Variant="Variant.Outlined"  type="submit">Register</MudButton>
-                <MudText Class="mt-2">Already register? <a href="/Account/Login">Login</a></MudText>
+                <button type="submit">Register</button>
+                <p>Already register? <a href="/Account/Login">Login</a></p>
             </EditForm>
-            </MudPaper>
 
     }
 </div>
@@ -55,9 +67,6 @@
 
     [SupplyParameterFromForm(Name = "RegisterForm")]
     private RegisterDto RegisterData { get; set; } = new RegisterDto();
-
-    [SupplyParameterFromForm]
-    private LoginDto LoginData { get; set; } = new LoginDto();
 
     private string? _error = string.Empty;
 

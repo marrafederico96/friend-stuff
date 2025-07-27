@@ -1,37 +1,25 @@
 ﻿@using FriendStuff.Components.Shared
 @using FriendStuff.Features.Auth
 @using FriendStuff.Features.Auth.DTOs;
-@using FriendStuff.Features.Group
 @using Microsoft.AspNetCore.Components.Authorization;
 @using System.Security.Claims
-@using FriendStuff.Features.Group.DTOs;
 
 @inherits LayoutComponentBase
 
 @inject IAuthService AuthService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<MudThemeProvider IsDarkMode="true"/> 
-<MudPopoverProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
 
-
-<Header UserInfo="@UserInfo"></Header>
+<HeaderComponent UserInfo="@UserInfo"></HeaderComponent>
 
 <CascadingValue Value="UserInfo" Name="UserInfo">
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Large">
-            @Body
-        </MudContainer>
-    </MudMainContent>
+    <main class="container">
+        @Body
+    </main>
 </CascadingValue>
-
-
 
 @code {
     UserInfoDto? UserInfo { get; set; }
-    List<GroupInfoDto>? GroupInfo { get; set; }
     private ClaimsPrincipal? _user;
     protected override async Task OnInitializedAsync()
     {

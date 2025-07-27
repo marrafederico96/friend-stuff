@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FriendStuff.Domain.Entities;
 
 namespace FriendStuff.Features.Auth.DTOs;
 

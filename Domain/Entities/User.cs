@@ -7,17 +7,17 @@ public class User : IdentityUser
 {
     [Required]
     [MaxLength(100)]
-    public required string FirstName { get; set; }
+    public required string FirstName { get; init; }
 
     [Required]
     [MaxLength(100)]
-    public required string LastName { get; set; }
+    public required string LastName { get; init; }
 
-    public ICollection<GroupMember> UserGroups { get; set; } = [];
+    public ICollection<GroupMember>? UserGroups { get; init; }
 
-    public ICollection<Expense> Expenses { get; set; } = [];
-    public ICollection<ExpenseContribution> ExpenseContributions { get; set; } = [];
-    public ICollection<Refund> RefundsPaid { get; set; } = [];
-    public ICollection<Refund> RefundsReceived { get; set; } = [];
+    public ICollection<Expense>? Expenses { get; init; }
+    public ICollection<ExpenseContribution>? ExpenseContributions { get; init; } 
+    public ICollection<Refund>? RefundsPaid { get; init; }
+    public ICollection<Refund>? RefundsReceived { get; init; }
 
 }

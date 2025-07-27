@@ -6,7 +6,7 @@ namespace FriendStuff.Features.Auth;
 
 public static class AuthApi
 {
-    public static void MapAuthEndopoints(this IEndpointRouteBuilder app)
+    public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
 
         app.MapPost("/Account/Login", async (

@@ -1,0 +1,22 @@
+﻿@using FriendStuff.Features.Auth.DTOs;
+
+
+<header >
+    <h1><a href="/">Friend Stuff</a></h1>
+    <nav>
+        @if (UserInfo != null)
+        {
+            <a  href="#">@UserInfo.Username.ToUpperInvariant()</a>
+        }
+        else
+        {
+            <a style="margin-right: 10px" href="/Account/Register">Register</a>
+            <a href="/Account/Login">Login</a>
+        }
+    </nav>
+</header>
+
+@code {
+    [Parameter]
+    public UserInfoDto? UserInfo { get; set; }
+}

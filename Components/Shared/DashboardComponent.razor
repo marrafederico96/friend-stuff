@@ -4,40 +4,29 @@
 
 @inject IGroupService GroupService
 
-<h2 style="margin: 20px 0; font-size: 1.8rem;">Your Groups</h2>
+<section class="group-info">
+    <h2>Your Groups</h2>
 
-<MudGrid Spacing="@Spacing" Justify="Justify.FlexStart">
     @if (GroupsInfo is { Count: > 0 })
     {
+        <div class="group-link">
         @foreach (var group in GroupsInfo)
-        {
-            <MudItem xs="12" sm="6" md="4" lg="3">
-                <MudPaper>
-                    <MudButton Style="width: 100%; justify-content: flex-start; align-items: flex-start;" Href="@GenerateGroupHref(group.GroupName)">
-                        <div style="display: flex; flex-direction: column;">
-                        <MudText>@group.GroupName</MudText>
-                        <MudText>Members: @group.Members.Count</MudText>
-                        </div>
-                    </MudButton>
-                </MudPaper>
-            </MudItem>
+        { 
+            <a href="@GenerateGroupHref(group.GroupName)">
+                <p>@group.GroupName</p>
+                <p>Members: @group.Members.Count</p>
+            </a>
         }
+        </div>
     }
     else
     {
-        <MudItem xs="12">
-            <MudText>@_error</MudText>
-        </MudItem>
+        <p>@_error</p>
     }
-    <MudFlexBreak />
-    <MudItem>
-        <GroupFormComponent UserInfo="@UserInfo" />
-    </MudItem>
-</MudGrid>
+    <GroupFormComponent UserInfo="@UserInfo" />
+</section>
 
 @code {
-    private int Spacing { get; set; } = 6;
-
     [CascadingParameter(Name = "UserInfo")]
     public UserInfoDto? UserInfo { get; set; }
 

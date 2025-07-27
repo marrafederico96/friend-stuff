@@ -8,12 +8,12 @@
 @rendermode  InteractiveServer
 
 <EditForm Model="GroupData" FormName="GroupForm" OnValidSubmit="Submit">
-    <MudTextField @bind-Value="GroupData.GroupName" Class="mb-2" T="string" Label="Group Name" Required="true" RequiredError="Group Name is required!" />
+    <InputText @bind-Value="GroupData.GroupName" requried placeholder="Group Name"/>
     @if (!string.IsNullOrEmpty(_error))
     {
-        <MudText>@_error</MudText>
+        <p>@_error</p>
     } 
-    <MudButton Style="width: 100%" Variant="Variant.Outlined" ButtonType="ButtonType.Submit">Create Group</MudButton>
+    <button>Create Group</button>
 </EditForm>
 
 @code {
