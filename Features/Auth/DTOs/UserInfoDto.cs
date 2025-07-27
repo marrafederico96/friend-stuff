@@ -20,6 +20,6 @@ public record UserInfoDto
     public string LastName { get; init; } = string.Empty;
 
     [Required] 
-    public List<GroupDto> UserGroups { get; init; } = [];
+    public List<GroupDto?> UserGroups { get; init; } = [];
 
 }

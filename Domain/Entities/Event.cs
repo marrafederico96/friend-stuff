@@ -27,15 +27,11 @@ public class Event
     [MaxLength(255)]
     public required string EventDescription { get; init; }
 
+    [Required]
+    public required DateTime StartDate { get; init; }
 
     [Required]
-    public required EventCategory EventCategory { get; init; }
-
-    [Required]
-    public required DateOnly StartDate { get; init; }
-
-    [Required]
-    public required DateOnly EndDate { get; init; }
+    public required DateTime EndDate { get; init; }
 
     [ForeignKey(name: "GroupId")]
     public UserGroup? Group { get; set; }

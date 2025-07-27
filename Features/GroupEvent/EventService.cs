@@ -40,10 +40,9 @@ public class EventService(FriendStuffDbContext context, UserManager<User> userMa
         {
             Event newEvent = new()
             {
-                EndDate = eventDto.EndDate,
-                StartDate = eventDto.StartDate,
+                EndDate = DateTime.SpecifyKind(eventDto.EndDate, DateTimeKind.Utc),
+                StartDate =DateTime.SpecifyKind(eventDto.StartDate, DateTimeKind.Utc),
                 NormalizeEventName = eventDto.EventName.TrimEnd().TrimStart().ToLowerInvariant(),
-                EventCategory = eventDto.EventCategory,
                 EventDescription = eventDto.EventDescription,
                 EventName = eventDto.EventName,
                 GroupId = group.GroupId,
@@ -69,7 +68,6 @@ public class EventService(FriendStuffDbContext context, UserManager<User> userMa
                 EndDate = eventDto.EndDate,
                 NormalizeEventName = eventDto.EventName.TrimEnd().TrimStart().ToLowerInvariant(),
                 StartDate = eventDto.StartDate,
-                EventCategory = eventDto.EventCategory,
                 EventDescription = eventDto.EventDescription,
                 EventName = eventDto.EventName,
                 GroupId = group.GroupId,
@@ -90,7 +88,6 @@ public class EventService(FriendStuffDbContext context, UserManager<User> userMa
             {
                 GroupName = e.Group != null ? e.Group.GroupName : string.Empty,
                 EndDate = e.EndDate,
-                EventCategory = e.EventCategory,
                 EventName = e.EventName,
                 StartDate = e.StartDate,
                 LocationName = e.Location != null ? e.Location.LocationName : string.Empty,

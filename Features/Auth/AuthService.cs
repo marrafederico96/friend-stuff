@@ -64,7 +64,7 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
             .ThenInclude(u => u.Group)
             .ThenInclude(userGroup => userGroup.Admin)
             .Include(u => u.UserGroups)
-            .ThenInclude(g => g.Group).ThenInclude(e => e.Events)
+            .ThenInclude(g => g.Group).ThenInclude(e => e.Events).ThenInclude(@event => @event.Location)
             .FirstOrDefaultAsync()?? throw new ArgumentException("User not found");
         
         return new UserInfoDto
@@ -73,24 +73,33 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
             FirstName = user.FirstName,
             LastName = user.LastName,
             Username = user.UserName,
-            UserGroups = user.UserGroups.Select(u => new GroupDto
+            UserGroups = user.UserGroups.Select(u =>
             {
-                GroupName = u.Group.GroupName,
-                NormalizeGroupName = u.Group.NormalizeGroupName,
-                AdminUsername = u.Group.Admin.UserName,
-                GroupEvents = u.Group.Events.Select(e => new EventDto
-                {
-                    GroupName = e.Group.GroupName,
-                    EndDate = e.EndDate,
-                    EventCategory = e.EventCategory,
-                    EventName = e.EventName,
-                    StartDate = e.StartDate,
-                    LocationName = e.Location.LocationName,
-                    EventDescription = e.EventDescription,
-                    City = e.Location.City,
-                    StreetName = e.Location.StreetName,
-                    StreetNumber = e.Location.StreetNumber
-                }).ToList()
+                if (u.Group.Events != null)
+                    return new GroupDto
+                    {
+                        GroupName = u.Group.GroupName,
+                        NormalizeGroupName = u.Group.NormalizeGroupName,
+                        AdminUsername = u.Group.Admin.UserName,
+                        GroupEvents = u.Group.Events.Select(e =>
+                        {
+                            if (e is { Group: not null, Location: not null })
+                                return new EventDto
+                                {
+                                    GroupName = e.Group.GroupName,
+                                    EndDate = e.EndDate,
+                                    EventName = e.EventName,
+                                    StartDate = e.StartDate,
+                                    LocationName = e.Location.LocationName,
+                                    EventDescription = e.EventDescription,
+                                    City = e.Location.City,
+                                    StreetName = e.Location.StreetName,
+                                    StreetNumber = e.Location.StreetNumber
+                                };
+                            return null;
+                        }).ToList()
+                    };
+                return null;
             }).ToList(),
         };
     }

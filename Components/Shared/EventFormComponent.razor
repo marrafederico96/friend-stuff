@@ -9,13 +9,12 @@
 
 <h3>Events</h3>
 <div>
-    @if(_eventDto is { Count: > 0 }) {
+    @if (_eventDto is { Count: > 0 })
     {
         foreach (var evt in _eventDto)
         {
             <p>@evt.EventName</p>
         }
-    }
     }
     else
     {
@@ -30,7 +29,7 @@
         <InputText type="text" @bind-Value="EventData.EventName" required placeholder="Event name"/>
     </label>
     <label>Event Description:
-        <InputText type="text" @bind-Value="EventData.EventDescription" required placeholder="Description"/>
+        <InputText type="text" @bind-Value="EventData.EventDescription" placeholder="Description"/>
     </label>
     <label>Start Date:
         <InputDate @bind-Value="EventData.StartDate" required placeholder="Start date"/>
@@ -42,18 +41,19 @@
         <InputText type="text" @bind-Value="EventData.LocationName" required placeholder="Location Name"/>
     </label>
     <label>City:
-        <InputText type="text" @bind-Value="EventData.City" required placeholder="City"/>
+        <InputText type="text" @bind-Value="EventData.City" placeholder="City"/>
     </label>
     <label>Street Name:
-        <InputText type="text" @bind-Value="EventData.StreetName" required placeholder="Street Name"/>
+        <InputText type="text" @bind-Value="EventData.StreetName" placeholder="Street Name"/>
     </label>
     <label>Street number:
-        <InputText type="text" @bind-Value="EventData.StreetNumber" required placeholder="Street Number"/>
+        <InputText type="text" @bind-Value="EventData.StreetNumber" placeholder="Street Number"/>
     </label>
     @if (!string.IsNullOrEmpty(_error))
     {
         <p class="error">@_error</p>
     }
+    <ValidationSummary />
     <button type="submit">Create</button>
 </EditForm>
 </div>
@@ -86,7 +86,7 @@
         try
         {
             EventData.GroupName = GroupName;
-            EventData.Username = UserInfo.Username;
+            EventData.Username = UserInfo.Username.Trim().ToUpperInvariant();
             await EventService.CreateEvent(EventData);
             EventData = new EventDto();
             NavigationManager.Refresh();
