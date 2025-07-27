@@ -2,26 +2,6 @@ h2 {
     font-size: 2.2rem;
 }
 
-.group-link {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 20px;
-    align-items: center;
-}
-
-.group-link a {
-    border: 1px solid var(--txt-color);
-    padding: 20px;
-    transition: background-color 0.3s ease-in-out;
-}
-
-.group-link a:hover {
-    color: var(--txt-color);
-    background-color: var(--accent-color);
-}
-
 ::deep form {
     display: flex;
     flex-direction: column;
@@ -36,15 +16,6 @@ h2 {
 
 @media screen and (max-width: 600px) {
 
-    .group-link {
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-    }
-    .group-link a {
-        width: 100%;
-    }
 
     ::deep form {
         justify-content: flex-start;

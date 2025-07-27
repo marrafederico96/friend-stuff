@@ -66,10 +66,40 @@ button:hover {
     color: #ff2626;
 }
 
+.group-link {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+}
+
+.group-link a {
+    border: 1px solid var(--txt-color);
+    padding: 20px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.group-link a:hover {
+    color: var(--txt-color);
+    background-color: var(--accent-color);
+}
+
 
 @media screen and (max-width: 600px) {
     .section {
         align-items: center;
+    }
+
+    .group-link {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+    .group-link a {
+        width: 100%;
     }
 
 }
