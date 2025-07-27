@@ -5,7 +5,7 @@ namespace FriendStuff.Features.Group.DTOs;
 public record  GroupDto
 {
     [Required(ErrorMessage = "Group name cannot be empty")]
-    public string GroupName { get; set; } = string.Empty;
+    public string? GroupName { get; set; }
 
     [Required(ErrorMessage = "Admin username cannot be empty")]
 

@@ -13,11 +13,11 @@ public class User : IdentityUser
     [MaxLength(100)]
     public required string LastName { get; init; }
 
-    public ICollection<GroupMember>? UserGroups { get; init; }
+    public ICollection<GroupMember> UserGroups { get; init; } = [];
 
-    public ICollection<Expense>? Expenses { get; init; }
-    public ICollection<ExpenseContribution>? ExpenseContributions { get; init; } 
-    public ICollection<Refund>? RefundsPaid { get; init; }
-    public ICollection<Refund>? RefundsReceived { get; init; }
+    public ICollection<Expense> Expenses { get; init; } = [];
+    public ICollection<ExpenseContribution> ExpenseContributions { get; init; } = [];
+    public ICollection<Refund> RefundsPaid { get; init; } = [];
+    public ICollection<Refund> RefundsReceived { get; init; } = [];
 
 }

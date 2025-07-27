@@ -5,6 +5,7 @@
     align-items: flex-start;
     gap: 20px;
     width: 100%;
+    padding: 0 20px;
 }
 
 h2 {
@@ -32,6 +33,18 @@ h2 {
     background-color: var(--accent-color);
 }
 
+::deep form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+::deep form input {
+    padding: 5px;
+}
+
 @media screen and (max-width: 600px) {
     .group-info {
         align-items: center;
@@ -41,10 +54,15 @@ h2 {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 0 20px;
         width: 100%;
     }
     .group-link a {
+        width: 100%;
+    }
+
+    ::deep form {
+        justify-content: flex-start;
+        align-items: flex-start;
         width: 100%;
     }
 }

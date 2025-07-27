@@ -52,3 +52,6 @@ button:hover {
     color: var(--txt-color);
 }
 
+.error {
+    color: #ff2626;
+}

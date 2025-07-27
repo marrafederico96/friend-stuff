@@ -11,7 +11,7 @@
     <InputText @bind-Value="GroupData.GroupName" requried placeholder="Group Name"/>
     @if (!string.IsNullOrEmpty(_error))
     {
-        <p>@_error</p>
+        <p class="error">@_error</p>
     } 
     <button>Create Group</button>
 </EditForm>

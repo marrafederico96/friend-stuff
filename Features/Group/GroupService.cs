@@ -20,8 +20,10 @@ public partial class GroupService(FriendStuffDbContext context, UserManager<User
     {
         var admin = await userManager.FindByNameAsync(groupDto.AdminUsername)
                     ?? throw new ArgumentException("Admin not found");
-
-         
+        
+        if (string.IsNullOrEmpty(groupDto.GroupName)) {
+            throw new ArgumentException("Group name cannot be empty");
+        }
         
         UserGroup newGroup = new()
         {

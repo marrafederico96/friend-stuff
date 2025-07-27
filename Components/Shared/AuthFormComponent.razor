@@ -19,7 +19,7 @@
                     </label>
                 @if (!string.IsNullOrEmpty(Error))
                 {
-                    <p>@Error</p>
+                    <p class="error">@Error</p>
                 }
                 <button>Login</button>
                 <p>New user? <a href="/Account/Register">Register</a></p>
@@ -51,7 +51,7 @@
                 
                 @if (!string.IsNullOrEmpty(_error))
                 {
-                    <p>@Error</p>
+                    <p class="error">@_error</p>
                 }
                 <button type="submit">Register</button>
                 <p>Already register? <a href="/Account/Login">Login</a></p>
@@ -95,6 +95,4 @@
             _error = "Internal error. Try again.";
         }
     }
-
-
 }
