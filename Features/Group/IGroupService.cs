@@ -31,5 +31,5 @@ public interface IGroupService
     /// <param name="groupName"></param>
     /// <returns></returns>
     public Task<GroupInfoDto> GetGroup(string groupName);
-
+    
 }

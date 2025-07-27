@@ -12,4 +12,12 @@ public interface IEventService
     /// <returns></returns>
     public Task CreateEvent(EventDto eventDto);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="groupName"></param>
+    /// <returns></returns>
+    public Task<List<EventDto>> GetEvents(string groupName);
+
+
 }

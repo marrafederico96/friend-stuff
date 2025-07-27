@@ -1,8 +1,9 @@
 @page "/Group/{GroupName}"
 @using FriendStuff.Components.Shared
 
+<section class="section">
 <GroupComponent GroupName="@GroupName"/>
-
+</section>
 @code {
     [Parameter] 
     public string? GroupName { get; set; }

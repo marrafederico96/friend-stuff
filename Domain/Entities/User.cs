@@ -7,6 +7,14 @@ public class User : IdentityUser
 {
     [Required]
     [MaxLength(100)]
+    public override required string UserName { get; set; }
+    
+    [Required]
+    [MaxLength(100)]
+    public override required string Email { get; set; }
+    
+    [Required]
+    [MaxLength(100)]
     public required string FirstName { get; init; }
 
     [Required]

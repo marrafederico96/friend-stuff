@@ -4,8 +4,7 @@
 
 @inject IGroupService GroupService
 
-<section class="group-info">
-    <h2>Your Groups</h2>
+<h2>Your Groups</h2>
 
     @if (GroupsInfo is { Count: > 0 })
     {
@@ -21,10 +20,9 @@
     }
     else
     {
-        <p class="error">@_error</p>
+        <p style="font-size: 1.1rem">@_error</p>
     }
     <GroupFormComponent UserInfo="@UserInfo" />
-</section>
 
 @code {
     [CascadingParameter(Name = "UserInfo")]
@@ -59,6 +57,8 @@
 
         var cleaned = new string(groupName
             .ToLowerInvariant()
+            .TrimEnd()
+            .TrimStart()
             .Replace(" ", "-")
             .Where(c => char.IsLetterOrDigit(c) || c == '-')
             .ToArray());

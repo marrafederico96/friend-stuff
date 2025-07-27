@@ -1,10 +1,14 @@
+using FriendStuff.Data;
 using FriendStuff.Domain.Entities;
 using FriendStuff.Features.Auth.DTOs;
+using FriendStuff.Features.Group.DTOs;
+using FriendStuff.Features.GroupEvent.DTOs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FriendStuff.Features.Auth;
 
-public class AuthService(UserManager<User> userManager, SignInManager<User> signInManager) : IAuthService
+public class AuthService(UserManager<User> userManager, SignInManager<User> signInManager, FriendStuffDbContext context) : IAuthService
 {
     public async Task RegisterUser(RegisterDto registerDto)
     {
@@ -53,13 +57,41 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
 
     public async Task<UserInfoDto> GetUserInfo(string username)
     {
-        var user = await userManager.FindByNameAsync(username) ?? throw new ArgumentException("User not found");
+        
+        var user = await context.Users
+            .Where(u => u.NormalizedUserName!.Equals(username.Trim().ToUpperInvariant()))
+            .Include(u => u.UserGroups)
+            .ThenInclude(u => u.Group)
+            .ThenInclude(userGroup => userGroup.Admin)
+            .Include(u => u.UserGroups)
+            .ThenInclude(g => g.Group).ThenInclude(e => e.Events)
+            .FirstOrDefaultAsync()?? throw new ArgumentException("User not found");
+        
         return new UserInfoDto
         {
-            Email = user.Email!,
+            Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Username = user.UserName!
+            Username = user.UserName,
+            UserGroups = user.UserGroups.Select(u => new GroupDto
+            {
+                GroupName = u.Group.GroupName,
+                NormalizeGroupName = u.Group.NormalizeGroupName,
+                AdminUsername = u.Group.Admin.UserName,
+                GroupEvents = u.Group.Events.Select(e => new EventDto
+                {
+                    GroupName = e.Group.GroupName,
+                    EndDate = e.EndDate,
+                    EventCategory = e.EventCategory,
+                    EventName = e.EventName,
+                    StartDate = e.StartDate,
+                    LocationName = e.Location.LocationName,
+                    EventDescription = e.EventDescription,
+                    City = e.Location.City,
+                    StreetName = e.Location.StreetName,
+                    StreetNumber = e.Location.StreetNumber
+                }).ToList()
+            }).ToList(),
         };
     }
 }

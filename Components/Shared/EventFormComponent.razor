@@ -1,0 +1,100 @@
+@using FriendStuff.Features.Auth.DTOs
+@using FriendStuff.Features.GroupEvent
+@using FriendStuff.Features.GroupEvent.DTOs
+
+@inject IEventService EventService
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<h3>Events</h3>
+<div>
+    @if(_eventDto is { Count: > 0 }) {
+    {
+        foreach (var evt in _eventDto)
+        {
+            <p>@evt.EventName</p>
+        }
+    }
+    }
+    else
+    {
+        <p>No events found</p>
+    }
+</div>
+
+<div class="form-container">
+<EditForm Model="EventData" FormName="EventForm" OnValidSubmit="CreateEvent">
+    <DataAnnotationsValidator />
+    <label>Event Name:
+        <InputText type="text" @bind-Value="EventData.EventName" required placeholder="Event name"/>
+    </label>
+    <label>Event Description:
+        <InputText type="text" @bind-Value="EventData.EventDescription" required placeholder="Description"/>
+    </label>
+    <label>Start Date:
+        <InputDate @bind-Value="EventData.StartDate" required placeholder="Start date"/>
+    </label>
+    <label>End Date:
+        <InputDate @bind-Value="EventData.EndDate" required placeholder="End date"/>
+    </label>
+    <label>Location Name:
+        <InputText type="text" @bind-Value="EventData.LocationName" required placeholder="Location Name"/>
+    </label>
+    <label>City:
+        <InputText type="text" @bind-Value="EventData.City" required placeholder="City"/>
+    </label>
+    <label>Street Name:
+        <InputText type="text" @bind-Value="EventData.StreetName" required placeholder="Street Name"/>
+    </label>
+    <label>Street number:
+        <InputText type="text" @bind-Value="EventData.StreetNumber" required placeholder="Street Number"/>
+    </label>
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <p class="error">@_error</p>
+    }
+    <button type="submit">Create</button>
+</EditForm>
+</div>
+@code {
+    [Parameter] public required string GroupName { get; set; }
+    [Parameter] public required UserInfoDto UserInfo { get; set; }
+
+    public EventDto EventData = new EventDto();
+
+    private string? _error = string.Empty;
+    private List<EventDto>? _eventDto = [];
+
+    protected override void OnParametersSet()
+    {
+        try
+        {
+            _eventDto = UserInfo.UserGroups
+                .Where(g => g.NormalizeGroupName.Equals(GroupName))
+                .SelectMany(g => g.GroupEvents)
+                .ToList();
+        }
+        catch (Exception e)
+        {
+            _error = e.Message;
+        }
+    }
+
+    private async Task CreateEvent()
+    {
+        try
+        {
+            EventData.GroupName = GroupName;
+            EventData.Username = UserInfo.Username;
+            await EventService.CreateEvent(EventData);
+            EventData = new EventDto();
+            NavigationManager.Refresh();
+
+        }
+        catch (ArgumentException e)
+        {
+            _error = e.Message;
+        }
+    }
+}

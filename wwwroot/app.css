@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Bitcount Prop Single", sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 
 :root {
@@ -23,6 +23,16 @@ body {
     max-width: 1200px;
     justify-content: center;
     align-items: flex-start;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+    padding: 0 20px;
 }
 
 a, button {
@@ -54,4 +64,12 @@ button:hover {
 
 .error {
     color: #ff2626;
+}
+
+
+@media screen and (max-width: 600px) {
+    .section {
+        align-items: center;
+    }
+
 }

@@ -16,13 +16,15 @@ public partial class GroupService(FriendStuffDbContext context, UserManager<User
 
     [GeneratedRegex(@"[^a-z0-9\-]")]
     private static partial Regex InvalidCharsRegex();
+    
+    
     public async Task CreateGroup(GroupDto groupDto)
     {
         var admin = await userManager.FindByNameAsync(groupDto.AdminUsername)
                     ?? throw new ArgumentException("Admin not found");
-        
-        if (string.IsNullOrEmpty(groupDto.GroupName)) {
-            throw new ArgumentException("Group name cannot be empty");
+        if (string.IsNullOrEmpty(groupDto.GroupName))
+        {
+            throw new ArgumentException("Group Name cannot be empty");
         }
         
         UserGroup newGroup = new()
@@ -104,7 +106,7 @@ public partial class GroupService(FriendStuffDbContext context, UserManager<User
         return groupInfoDto;
     }
     
-    private string NormalizeGroupName(string name)
+    private static string NormalizeGroupName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return string.Empty;

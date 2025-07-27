@@ -79,4 +79,29 @@ public class EventService(FriendStuffDbContext context, UserManager<User> userMa
         }
         await context.SaveChangesAsync();
     }
+
+    public async Task<List<EventDto>> GetEvents(string groupName)
+    {
+        var events = await context.Events
+            .Include(e => e.Group)
+            .Include(e => e.Location)
+            .Where(e => e.Group != null && e.Group.NormalizeGroupName == groupName)
+            .Select(e => new EventDto
+            {
+                GroupName = e.Group != null ? e.Group.GroupName : string.Empty,
+                EndDate = e.EndDate,
+                EventCategory = e.EventCategory,
+                EventName = e.EventName,
+                StartDate = e.StartDate,
+                LocationName = e.Location != null ? e.Location.LocationName : string.Empty,
+                City = e.Location != null ? e.Location.City : string.Empty,
+                StreetName = e.Location != null ? e.Location.StreetName: string.Empty,
+                StreetNumber = e.Location != null ? e.Location.StreetNumber: string.Empty,
+                EventDescription = e.EventDescription,
+            })
+            .ToListAsync();
+
+        return events;
+    }
+
 }

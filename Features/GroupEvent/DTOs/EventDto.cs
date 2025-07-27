@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using FriendStuff.Domain.Entities.Enums;
 
@@ -7,30 +6,30 @@ namespace FriendStuff.Features.GroupEvent.DTOs;
 public record class EventDto
 {
     [Required(ErrorMessage = "Event name cannot be empty")]
-    public required string EventName { get; init; }
+    public string EventName { get; set; } = string.Empty;
 
     [Required]
-    public required string Username { get; init; }
+    public string Username { get; set; } = string.Empty;
 
     [Required]
-    public required string GroupName { get; init; }
+    public string GroupName { get; set; } = string.Empty;
 
-    public string EventDescription { get; init; } = string.Empty;
+    public string EventDescription { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Start date cannot be empty")]
-    public required DateOnly StartDate { get; init; }
+    public DateOnly StartDate { get; set; }
 
     [Required(ErrorMessage = "End date cannot be empty")]
-    public required DateOnly EndDate { get; init; }
+    public DateOnly EndDate { get; set; }
 
     [Required(ErrorMessage = "Event category cannot be empty")]
-    public required EventCategory EventCategory { get; init; }
+    public EventCategory EventCategory { get; set; }
 
     [Required(ErrorMessage = "Location name cannot be empty")]
-    public required string LocationName { get; init; }
+    public string LocationName { get; set; } = string.Empty;
 
-    public string City { get; init; } = string.Empty;
-    public string StreetName { get; init; } = string.Empty;
-    public string StreetNumber { get; init; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string StreetName { get; set; } = string.Empty;
+    public string StreetNumber { get; set; } = string.Empty;
 
 }
