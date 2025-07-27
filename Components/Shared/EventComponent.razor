@@ -69,8 +69,14 @@
     public EventDto EventData = new EventDto();
 
     private string? _error = string.Empty;
-    private List<EventDto>? _eventDto = [];
+    private List<EventDto> _eventDto = [];
 
+    protected override void OnInitialized()
+    {
+        EventData.StartDate = DateTime.Today;
+        EventData.EndDate = DateTime.Today;
+    }
+    
     protected override void OnParametersSet()
     {
         try
