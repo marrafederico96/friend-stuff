@@ -7,7 +7,7 @@
 
 @rendermode InteractiveServer
 
-<h3>Events</h3>
+<h3 style="font-size: 1.6rem">Events</h3>
 <div class="group-link">
     @if (_eventDto is { Count: > 0 })
     {
@@ -15,8 +15,8 @@
         {
             <a>
                 <p>@evt.EventName</p>
-                <p>@evt.StartDate</p>
-                <p>@evt.EndDate</p>
+                <p>Start. <span>@evt.StartDate.ToString("dd/MM/yyyy")</span></p>
+                <p>End: <span>@evt.EndDate.ToString("dd/MM/yyyy")</span></p>
                 <p>@evt.LocationName</p>
             </a>
         }
