@@ -1,6 +1,10 @@
+@using System.Diagnostics
 @using FriendStuff.Features.Auth.DTOs
+@using Microsoft.AspNetCore.WebUtilities
 
 @rendermode InteractiveServer
+
+@inject NavigationManager NavigationManager
 
 <div class="tab-button">
     <button type="button" class="@GetTabClass("events")" @onclick="@(() => ChangeTab("events"))">Events</button>
@@ -19,12 +23,25 @@ else
 @code {
     [Parameter] public required string GroupName { get; set; }
     [Parameter] public required UserInfoDto UserInfo { get; set; }
-    
+
     private string _activeTab = "events";
+    
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = QueryHelpers.ParseQuery(uri.Query);
+
+        if (query.TryGetValue("tab", out var tab))
+        {
+            _activeTab = tab;
+        }
+    }
     
     private void ChangeTab(string tab)
     {
         _activeTab = tab;
+        var uri = NavigationManager.GetUriWithQueryParameter("tab", tab);
+        NavigationManager.NavigateTo(uri, forceLoad:true);
         StateHasChanged();
     }
     
