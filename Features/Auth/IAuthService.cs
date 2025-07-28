@@ -34,4 +34,11 @@ public interface IAuthService
     /// <param name="username">String contains username of user to find</param>
     /// <returns></returns>
     public Task<UserInfoDto> GetUserInfo(string username);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Task Logout();
+
 }

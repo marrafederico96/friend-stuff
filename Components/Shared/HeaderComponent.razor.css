@@ -5,3 +5,11 @@ header {
     padding: 10px 20px;
     border-bottom: 1px solid var(--txt-color);
 }
+
+header nav {
+   display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}

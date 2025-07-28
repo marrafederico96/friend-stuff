@@ -24,6 +24,12 @@ public static class AuthApi
             }
         }).DisableAntiforgery();
 
+        app.MapPost("/Account/Logout", async (
+            IAuthService authService) =>
+        {
+            await authService.Logout();
+            return Results.Redirect("/");
+        }).DisableAntiforgery().RequireAuthorization();
     }
 
 

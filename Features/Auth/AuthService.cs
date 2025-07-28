@@ -43,6 +43,11 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
         }
     }
 
+    public async Task Logout()
+    {
+        await signInManager.SignOutAsync();
+    }
+
     public async Task DeleteUser(UsernameDto usernameDto)
     {
         var user = await userManager.FindByNameAsync(usernameDto.Username.Trim());

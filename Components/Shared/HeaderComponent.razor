@@ -1,12 +1,15 @@
 ﻿@using FriendStuff.Features.Auth.DTOs;
 
-
+@rendermode InteractiveServer
 <header >
     <h1><a href="/">Friend Stuff</a></h1>
     <nav>
         @if (UserInfo != null)
         {
-            <a style="font-weight: 600;" href="#">@UserInfo.Username.ToUpperInvariant()</a>
+            <a style="font-weight: 600;" href="/">@UserInfo.Username</a>
+            <form action="/Account/Logout" method="post">
+                <button type="submit">Logout</button>
+            </form>
         }
         else
         {
@@ -19,4 +22,5 @@
 @code {
     [Parameter]
     public UserInfoDto? UserInfo { get; set; }
+    
 }

@@ -23,7 +23,18 @@ builder.Services.AddAuthentication(options =>
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
-    .AddIdentityCookies();
+    .AddIdentityCookies(o =>
+    {
+        o.ApplicationCookie?.Configure(cookieOption =>
+        {
+            cookieOption.Cookie.HttpOnly = true;
+            cookieOption.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            cookieOption.ExpireTimeSpan = TimeSpan.FromDays(15);
+            cookieOption.SlidingExpiration = true;
+            cookieOption.Cookie.SameSite = SameSiteMode.Strict;
+            cookieOption.Cookie.MaxAge = TimeSpan.FromDays(15);
+        });
+    });
 
 builder.Services.AddDbContext<FriendStuffDbContext>(options =>
 {
