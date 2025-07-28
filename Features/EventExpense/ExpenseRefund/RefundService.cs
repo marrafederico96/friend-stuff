@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FriendStuff.Features.EventExpense.ExpenseRefund;
 
-public class RefundService(UserManager<User> userManager,FriendStuffDbContext context) : IRefundService
+public class RefundService(UserManager<User> userManager,FriendStuffDbContext context, IExpenseService expenseService) : IRefundService
 {
     public async Task AddRefund(RefundDto refundDto)
     {
@@ -23,7 +23,14 @@ public class RefundService(UserManager<User> userManager,FriendStuffDbContext co
             .Where(ec => ec.ParticipantId == debtor.Id && ec.Expense.PayerId == payer.Id && ec.AmountOwed > 0)
             .SumAsync(c => c.AmountOwed);
 
-        if (refundDto.Amount > totalDebt)
+        var balanceDto = new BalanceDto
+        {
+            PayerUsername = payer.UserName,
+            DebtorUsername = debtor.UserName
+        };
+        var balance = await expenseService.CalculateBalance(balanceDto);
+        
+        if (refundDto.Amount > balance)
         {
             throw new InvalidOperationException("Refund amount exceeds current debt");
         }

@@ -1,9 +1,12 @@
 @using FriendStuff.Features.Auth.DTOs
 @using FriendStuff.Features.EventExpense
 @using FriendStuff.Features.EventExpense.DTOs
+@using FriendStuff.Features.EventExpense.ExpenseRefund
 @using FriendStuff.Features.Group.DTOs
 
 @inject IExpenseService ExpenseService
+@inject IRefundService RefundService
+@inject NavigationManager NavigationManager
 
 @rendermode InteractiveServer
 
@@ -24,11 +27,26 @@
                     case > 0:
                         <li>You owe <strong>@amount.ToString("0.00")€</strong> to <strong>@username</strong></li>
                         break;
+                    case 0:
+                        <li>No debt</li>
+                        break;
                 }
             }
         </ul>
     }
 }
+<h2>Add Refund</h2>
+<div class="form-container">
+    <EditForm Model="_refundDto" FormName="RefundForm" OnValidSubmit="AddRefund">
+        <InputNumber @bind-Value="_refundDto.Amount" required placeholder="Amount" />
+        <InputText @bind-Value="_refundDto.PayerUsername" required placeholder="Username" />
+        @if (!string.IsNullOrEmpty(_error))
+        {
+            <p class="error">@_error</p>
+        }
+        <button type="submit">Add refund</button>
+    </EditForm>
+</div>
 
 @code {
     [Parameter]
@@ -38,7 +56,9 @@
     private decimal _balance = 0;
     private List<ExpenseDto> _expenses = [];
     private List<GroupMemberDto?> _groupMembers = [];
-    private List<(string Username, decimal Balance)> _balancesWithUsers = [];
+    private readonly List<(string Username, decimal Balance)> _balancesWithUsers = [];
+    private RefundDto _refundDto = new RefundDto();
+    private string _error = string.Empty;
     
     private async Task Calculate()
     {
@@ -57,12 +77,36 @@
                 };
 
                 var result = await ExpenseService.CalculateBalance(dto);
-    
+
                 if (result != 0)
+                {
                     _balancesWithUsers.Add((u.Username, result));
+                }
 
                 _balance += result;
             }
+        }
+    }
+
+    private async Task AddRefund()
+    {
+        try
+        {
+            if (UserInfo != null)
+            {
+                _refundDto.DebtorUsername = UserInfo.Username;
+                await RefundService.AddRefund(_refundDto);
+                _refundDto = new RefundDto();
+                NavigationManager.NavigateTo("/", forceLoad: true);
+            }
+        }
+        catch (ArgumentException e)
+        {
+            _error = e.Message;
+        }
+        catch (InvalidOperationException e)
+        {
+            _error = e.Message;
         }
     }
 }

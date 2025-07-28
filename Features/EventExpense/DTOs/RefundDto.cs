@@ -5,13 +5,12 @@ namespace FriendStuff.Features.EventExpense.DTOs;
 public record RefundDto
 {
 
-    [Required]
-    public required string PayerUsername { get; init; }
+    [Required] 
+    public string PayerUsername { get; set; } = string.Empty;
 
     [Required]
-    public required string DebtorUsername { get; init; }
+    public string DebtorUsername { get; set; } = string.Empty;
 
-    [Required]
-    public required decimal Amount { get; init; }
+    [Required] public decimal Amount { get; set; }
 
 }
