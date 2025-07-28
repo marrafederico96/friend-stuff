@@ -7,6 +7,7 @@
 @rendermode InteractiveServer
 
 @inject IExpenseService ExpenseService
+@inject NavigationManager NavigationManager
 
 @if (_event != null)
 {
@@ -101,6 +102,7 @@
 
                 await ExpenseService.AddExpense(ExpenseDto);
                 ExpenseDto = new ExpenseDto();
+                NavigationManager.Refresh();
             }
         }
         catch (ArgumentException e)

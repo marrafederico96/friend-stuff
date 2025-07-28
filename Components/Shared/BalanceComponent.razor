@@ -9,7 +9,6 @@
 
 <h2 style="font-size: 2.2rem">Balance</h2>
 <button type="button" @onclick="Calculate">Calculate Balance</button>
-<p>@_balance</p>
 @if (_balancesWithUsers.Any())
 {
     @if (_balancesWithUsers.Any())
@@ -23,7 +22,7 @@
                         <li><strong>@username</strong> owes you <strong>@Math.Abs(amount).ToString("0.00")€</strong></li>
                         break;
                     case > 0:
-                        <li>You owe <strong>@amount.ToString("0.00")€</strong><strong>@username</strong></li>
+                        <li>You owe <strong>@amount.ToString("0.00")€</strong> to <strong>@username</strong></li>
                         break;
                 }
             }
