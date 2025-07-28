@@ -6,20 +6,27 @@
 @inject IGroupMemberService GroupMemberService
 @inject NavigationManager NavigationManager
 
-<div class="form-container">
-    <EditForm Model="UsernameDto" FormName="SearchUser" OnValidSubmit="SearchUser">
-        <DataAnnotationsValidator />
-        <InputText @bind-Value="UsernameDto.Username" type="search" placeholder="Search User" />
-        <button>Search</button>
-        @if (_userFound != null)
-        {
-            <p style="font-weight: bold; font-size: 1.1rem; margin: 10px 0;">@_userFound.Username 
-                <span>(@_userFound.FirstName @_userFound.LastName)</span>
-                <button @onclick="AddMember">Add</button>
+@if (_group != null && _group.AdminUsername.Equals(UserInfo.Username))
+{
+    <div class="form-container">
+        <EditForm Model="UsernameDto" FormName="SearchUser" OnValidSubmit="SearchUser">
+            <DataAnnotationsValidator/>
+            <InputText @bind-Value="UsernameDto.Username" type="search" placeholder="Search User"/>
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <p class="error">@_error</p>
+            }
+            <button>Search</button>
+            @if (_userFound != null)
+            {
+                <p style="font-weight: bold; font-size: 1.1rem; margin: 10px 0;">@_userFound.Username
+                    <span>(@_userFound.FirstName @_userFound.LastName)</span>
+                    <button @onclick="AddMember">Add</button>
                 </p>
-        }
-    </EditForm>
-</div>
+            }
+        </EditForm>
+    </div>
+}
 <ul>
     @foreach (var member in _groupMember)
     {
@@ -40,7 +47,7 @@
     private UserInfoDto? _userFound;
     private GroupDto? _group;
     private List<GroupMemberDto> _groupMember = [];
-    private string? _error = string.Empty;
+    private string? _error;
     
     protected override void OnInitialized()
     {
@@ -71,7 +78,6 @@
             {
                 await GroupMemberService.AddMember(_userFound.Username, GroupName, UserInfo.Username);
                 NavigationManager.Refresh();
-                _userFound = new UserInfoDto();
             }
         }
         catch (ArgumentException e)
@@ -84,9 +90,13 @@
     {
         try
         {
-            if (GroupName != null)
+            if (GroupName != null && _group != null)
             {
-                await GroupMemberService.RemoveMember(memberUsername, GroupName, UserInfo.Username);
+                await GroupMemberService.RemoveMember(memberUsername, GroupName, _group.AdminUsername);
+                if (!memberUsername.Equals(_group.AdminUsername))
+                {
+                    NavigationManager.NavigateTo("/", forceLoad: true);
+                }
                 NavigationManager.Refresh();
             }
         }

@@ -23,7 +23,10 @@ public class GroupMemberService(FriendStuffDbContext context, UserManager<User> 
         var group = await context.UserGroups.FirstOrDefaultAsync(g => g.NormalizeGroupName == groupName && g.AdminId == admin.Id)
                     ?? throw new ArgumentException("Group not found");
 
-        if (user.UserGroups != null && user.UserGroups.Select(g => g.GroupId == group.GroupId).FirstOrDefault())
+        var alreadyInGroup = await context.GroupMembers
+            .AnyAsync(gm => gm.GroupId == group.GroupId && gm.UserId == user.Id);
+
+        if (alreadyInGroup)
         {
             throw new ArgumentException("User already added");
         }
@@ -35,6 +38,7 @@ public class GroupMemberService(FriendStuffDbContext context, UserManager<User> 
             GroupId = group.GroupId,
             UserId = user.Id
         };
+
         await context.GroupMembers.AddAsync(groupMember);
         await context.SaveChangesAsync();
     }
