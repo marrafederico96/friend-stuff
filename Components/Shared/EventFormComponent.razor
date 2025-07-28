@@ -10,9 +10,9 @@
 <div class="group-link">
     @if (_eventDto is { Count: > 0 })
     {
-        foreach (var evt in _eventDto)
+        foreach (var evt in _eventDto.OfType<EventDto>())
         {
-            <a>
+            <a href="/Group/@GroupName/@GenerateEventHref(evt.NormalizedEventName)">
                 <p>@evt.EventName</p>
                 <p>Start. <span>@evt.StartDate.ToString("dd/MM/yyyy")</span></p>
                 <p>End: <span>@evt.EndDate.ToString("dd/MM/yyyy")</span></p>
@@ -96,5 +96,21 @@
         {
             _error = e.Message;
         }
+    }
+    
+    private string GenerateEventHref(string eventName)
+    {
+        if (string.IsNullOrWhiteSpace(eventName))
+            return string.Empty;
+
+        var cleaned = new string(eventName
+            .ToLowerInvariant()
+            .TrimEnd()
+            .TrimStart()
+            .Replace(" ", "-")
+            .Where(c => char.IsLetterOrDigit(c) || c == '-')
+            .ToArray());
+
+        return $"{cleaned}";
     }
 }

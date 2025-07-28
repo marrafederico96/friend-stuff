@@ -54,14 +54,14 @@ public class ExpenseService(FriendStuffDbContext context, UserManager<User> user
     public async Task<decimal> CalculateBalance(BalanceDto balanceDto)
     {
         var payer = await userManager.Users
-            .Where(u => u.NormalizedUserName != null && u.NormalizedUserName.Equals(balanceDto.PayerUsername.Trim(), StringComparison.InvariantCultureIgnoreCase))
+            .Where(u => u.NormalizedUserName == balanceDto.PayerUsername.Trim().ToUpperInvariant())
             .Include(u => u.ExpenseContributions).ThenInclude(ec => ec.Expense)
             .Include(u => u.RefundsPaid)
             .Include(u => u.RefundsReceived)
             .FirstOrDefaultAsync() ?? throw new ArgumentException("Payer not found");
 
         var debtor = await userManager.Users
-            .Where(u => u.NormalizedUserName != null && u.NormalizedUserName.Equals(balanceDto.DebtorUsername.Trim(), StringComparison.InvariantCultureIgnoreCase))
+            .Where(u => u.NormalizedUserName == balanceDto.DebtorUsername.Trim().ToUpperInvariant())
             .Include(u => u.ExpenseContributions).ThenInclude(ec => ec.Expense)
             .FirstOrDefaultAsync() ?? throw new ArgumentException("Debtor not found");
 

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using FriendStuff.Data;
 using FriendStuff.Domain.Entities;
 using FriendStuff.Features.GroupEvent.DTOs;
@@ -6,8 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FriendStuff.Features.GroupEvent;
 
-public class EventService(FriendStuffDbContext context, UserManager<User> userManager) : IEventService
+public partial class EventService(FriendStuffDbContext context, UserManager<User> userManager) : IEventService
 {
+    [GeneratedRegex(@"\s+")]
+    private static partial Regex WhitespaceRegex();
+
+    [GeneratedRegex(@"[^a-z0-9\-]")]
+    private static partial Regex InvalidCharsRegex();
     public async Task CreateEvent(EventDto eventDto)
     {
         var groupName = eventDto.GroupName.TrimEnd().TrimStart().ToLowerInvariant();
@@ -18,8 +24,9 @@ public class EventService(FriendStuffDbContext context, UserManager<User> userMa
                        .FirstOrDefaultAsync(u => u.NormalizedUserName == eventDto.Username)
                    ?? throw new ArgumentException("User not found");
 
-        var group = user.UserGroups.FirstOrDefault(g => g.Group.NormalizeGroupName.Equals(groupName)) ?? throw new ArgumentException("Group not found");
-        var result = await context.Events.Where(e => e.NormalizeEventName.Equals(eventDto.EventName.TrimEnd().TrimStart().ToLowerInvariant()) && e.GroupId == group.GroupId).FirstOrDefaultAsync();
+        var group = user.UserGroups
+            .FirstOrDefault(g => g.Group.NormalizeGroupName.Equals(NormalizeEventName(groupName))) ?? throw new ArgumentException("Group not found");
+        var result = await context.Events.Where(e => e.NormalizeEventName.Equals(NormalizeEventName(eventDto.EventName)) && e.GroupId == group.GroupId).FirstOrDefaultAsync();
 
         if (result != null)
         {
@@ -42,7 +49,7 @@ public class EventService(FriendStuffDbContext context, UserManager<User> userMa
             {
                 EndDate = DateTime.SpecifyKind(eventDto.EndDate, DateTimeKind.Utc),
                 StartDate =DateTime.SpecifyKind(eventDto.StartDate, DateTimeKind.Utc),
-                NormalizeEventName = eventDto.EventName.TrimEnd().TrimStart().ToLowerInvariant(),
+                NormalizeEventName = NormalizeEventName(eventDto.EventName),
                 EventDescription = eventDto.EventDescription,
                 EventName = eventDto.EventName,
                 GroupId = group.GroupId,
@@ -66,7 +73,7 @@ public class EventService(FriendStuffDbContext context, UserManager<User> userMa
             Event newEvent = new()
             {
                 EndDate = eventDto.EndDate,
-                NormalizeEventName = eventDto.EventName.TrimEnd().TrimStart().ToLowerInvariant(),
+                NormalizeEventName = NormalizeEventName(eventDto.EventName),
                 StartDate = eventDto.StartDate,
                 EventDescription = eventDto.EventDescription,
                 EventName = eventDto.EventName,
@@ -89,6 +96,7 @@ public class EventService(FriendStuffDbContext context, UserManager<User> userMa
                 GroupName = e.Group != null ? e.Group.GroupName : string.Empty,
                 EndDate = e.EndDate,
                 EventName = e.EventName,
+                NormalizedEventName = e.NormalizeEventName,
                 StartDate = e.StartDate,
                 LocationName = e.Location != null ? e.Location.LocationName : string.Empty,
                 City = e.Location != null ? e.Location.City : string.Empty,
@@ -99,6 +107,18 @@ public class EventService(FriendStuffDbContext context, UserManager<User> userMa
             .ToListAsync();
 
         return events;
+    }
+    
+    private static string NormalizeEventName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return string.Empty;
+
+        var trimmed = name.TrimEnd().TrimStart().ToLowerInvariant();
+        trimmed =  WhitespaceRegex().Replace(trimmed, "-");
+        trimmed = InvalidCharsRegex().Replace(trimmed, "");
+
+        return trimmed;
     }
 
 }

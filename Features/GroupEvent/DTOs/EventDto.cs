@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using FriendStuff.Domain.Entities.Enums;
+using FriendStuff.Features.EventExpense.DTOs;
 
 namespace FriendStuff.Features.GroupEvent.DTOs;
 
@@ -8,6 +9,8 @@ public record class EventDto
     [Required(ErrorMessage = "Event name cannot be empty")]
     public string EventName { get; set; } = string.Empty;
 
+    public string NormalizedEventName { get; set; } = string.Empty;
+    
     public string Username { get; set; } = string.Empty;
 
     public string GroupName { get; set; } = string.Empty;
@@ -27,4 +30,5 @@ public record class EventDto
     public string StreetName { get; set; } = string.Empty;
     public string StreetNumber { get; set; } = string.Empty;
 
+    public List<ExpenseDto>? Expenses { get; set; } = [];
 }

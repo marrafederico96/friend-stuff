@@ -1,52 +1,113 @@
-@using System.Diagnostics
 @using FriendStuff.Features.Auth.DTOs
-@using Microsoft.AspNetCore.WebUtilities
+@using FriendStuff.Features.EventExpense
+@using FriendStuff.Features.EventExpense.DTOs
+@using FriendStuff.Features.Group.DTOs
+@using FriendStuff.Features.GroupEvent.DTOs
 
 @rendermode InteractiveServer
 
-@inject NavigationManager NavigationManager
+@inject IExpenseService ExpenseService
 
-<div class="tab-button">
-    <button type="button" class="@GetTabClass("events")" @onclick="@(() => ChangeTab("events"))">Events</button>
-    <button type="button" class="@GetTabClass("members")" @onclick="@(() => ChangeTab("members"))">Members</button>
-</div>
-
-@if (_activeTab.Equals("events"))
+@if (_event != null)
 {
-    <EventFormComponent GroupName="@GroupName" UserInfo="@UserInfo"/>
-}
-else
-{
-    <GroupMemberComponent UserInfo="@UserInfo" GroupName="@GroupName"/>
+    <h2>@_event.EventName</h2>
+    <div class="form-container">
+        <EditForm Model="ExpenseDto" OnValidSubmit="AddExpense" FormName="ExpenseForm">
+            <InputNumber @bind-Value="ExpenseDto.Amount" placeholder="Amount" required  />
+            <InputText @bind-Value="ExpenseDto.ExpenseName" placeholder="Expense Name" required />
+            <div class="input-checkbox"> 
+                @foreach (var user in _selectableMembers)
+                {
+                    <input type="checkbox" 
+                           id="@($"checkbox-{user.Username}")"
+                           checked="@ExpenseDto.ParticipantUsername.Contains(user.Username)"
+                           @onchange="@((e) => OnParticipantCheckboxChange(e, user.Username))" />
+                    <label for="@($"checkbox-{user.Username}")">@user.Username</label>
+                    <br/>
+                }
+            </div>
+            <button type="submit">Add Expense</button>
+        </EditForm>
+    </div>
+    <h3>Expenses</h3>
+    <ul class="expense-list">
+        @foreach (var expense in _group.GroupEvents.SelectMany(evt => evt.Expenses))
+        {
+            <li>Expense:
+                @expense.ExpenseName 
+                <p>Amount: @expense.Amount (@expense.PayerUsername)</p>
+                <p>Participants: 
+                    @foreach (var u in expense.ParticipantUsername)
+                    {
+                        <span>@u</span>
+                    }
+                </p>
+            </li>
+        }
+    </ul>
 }
 
 @code {
-    [Parameter] public required string GroupName { get; set; }
-    [Parameter] public required UserInfoDto UserInfo { get; set; }
+    [Parameter] public string? GroupName { get; set; }
+    [Parameter] public string? EventName { get; set; }
+    [Parameter] public UserInfoDto? UserInfo { get; set; }
 
-    private string _activeTab = "events";
-    
-    protected override void OnInitialized()
+    private string? _error;
+
+    private ExpenseDto ExpenseDto { get; set; } = new ExpenseDto();
+    private List<GroupMemberDto> _selectableMembers = [];
+
+    private EventDto? _event;
+    private GroupDto? _group;
+
+    protected override void OnParametersSet()
     {
-        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-        var query = QueryHelpers.ParseQuery(uri.Query);
-
-        if (query.TryGetValue("tab", out var tab))
+        if (UserInfo == null) return;
+        _event = UserInfo.UserGroups
+            .SelectMany(e => e.GroupEvents)
+            .FirstOrDefault(e => e.NormalizedEventName.Equals(EventName));
+        _group = UserInfo.UserGroups
+            .FirstOrDefault(g => g.NormalizeGroupName.Equals(GroupName));
+        if (_group != null)
         {
-            _activeTab = tab;
+            _selectableMembers = _group.GroupMembers
+                .Where(member => member.Username != UserInfo.Username).ToList();
         }
     }
-    
-    private void ChangeTab(string tab)
+
+    private void OnParticipantCheckboxChange(ChangeEventArgs e, string username)
     {
-        _activeTab = tab;
-        var uri = NavigationManager.GetUriWithQueryParameter("tab", tab);
-        NavigationManager.NavigateTo(uri, forceLoad:true);
-        StateHasChanged();
+        if (e.Value != null && (bool)e.Value)
+        {
+            if (!ExpenseDto.ParticipantUsername.Contains(username))
+            {
+                ExpenseDto.ParticipantUsername.Add(username);
+            }
+        }
+        else
+        {
+            ExpenseDto.ParticipantUsername.Remove(username);
+        }
     }
-    
-    private string GetTabClass(string tab)
+
+    public async Task AddExpense()
     {
-        return _activeTab == tab ? "tab-active" : "";
+        try
+        {
+            if (UserInfo != null && _event != null)
+            {
+                ExpenseDto.PayerUsername = UserInfo.Username;
+                ExpenseDto.EventName = _event.NormalizedEventName;
+
+                await ExpenseService.AddExpense(ExpenseDto);
+                ExpenseDto = new ExpenseDto();
+            }
+        }
+        catch (ArgumentException e)
+        {
+            _error = e.Message;
+            Console.WriteLine($"Error adding expense: {_error}");
+        }
     }
+
 }

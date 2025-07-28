@@ -1,0 +1,69 @@
+@using FriendStuff.Features.Auth.DTOs
+@using FriendStuff.Features.EventExpense
+@using FriendStuff.Features.EventExpense.DTOs
+@using FriendStuff.Features.Group.DTOs
+
+@inject IExpenseService ExpenseService
+
+@rendermode InteractiveServer
+
+<h2 style="font-size: 2.2rem">Balance</h2>
+<button type="button" @onclick="Calculate">Calculate Balance</button>
+<p>@_balance</p>
+@if (_balancesWithUsers.Any())
+{
+    @if (_balancesWithUsers.Any())
+    {
+        <ul>
+            @foreach (var (username, amount) in _balancesWithUsers)
+            {
+                switch (amount)
+                {
+                    case < 0:
+                        <li><strong>@username</strong> owes you <strong>@Math.Abs(amount).ToString("0.00")€</strong></li>
+                        break;
+                    case > 0:
+                        <li>You owe <strong>@amount.ToString("0.00")€</strong><strong>@username</strong></li>
+                        break;
+                }
+            }
+        </ul>
+    }
+}
+
+@code {
+    [Parameter]
+    public UserInfoDto? UserInfo { get; set; }
+
+    private BalanceDto _balanceDto = new BalanceDto();
+    private decimal _balance = 0;
+    private List<ExpenseDto> _expenses = [];
+    private List<GroupMemberDto?> _groupMembers = [];
+    private List<(string Username, decimal Balance)> _balancesWithUsers = [];
+    
+    private async Task Calculate()
+    {
+        if (UserInfo != null)
+        {
+            _groupMembers = UserInfo.UserGroups.SelectMany(u => u.GroupMembers.Distinct()).ToList();
+            var events = UserInfo.UserGroups.SelectMany(e => e.GroupEvents).ToList();
+            _expenses = events.SelectMany(ex => ex.Expenses).ToList();
+
+            foreach (var u in _groupMembers.Where(m => m != null && m.Username != UserInfo.Username))
+            {
+                var dto = new BalanceDto
+                {
+                    PayerUsername = u.Username,
+                    DebtorUsername = UserInfo.Username
+                };
+
+                var result = await ExpenseService.CalculateBalance(dto);
+    
+                if (result != 0)
+                    _balancesWithUsers.Add((u.Username, result));
+
+                _balance += result;
+            }
+        }
+    }
+}

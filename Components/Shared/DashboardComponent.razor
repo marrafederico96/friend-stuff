@@ -1,8 +1,11 @@
 ﻿@using FriendStuff.Features.Auth.DTOs
+@using FriendStuff.Features.EventExpense
+@using FriendStuff.Features.EventExpense.DTOs
 @using FriendStuff.Features.Group
 @using FriendStuff.Features.Group.DTOs
 
 @inject IGroupService GroupService
+@inject IExpenseService ExpenseService
 
 <h2 style="font-size: 2.2rem">Your Groups</h2>
 
@@ -23,6 +26,8 @@
         <p style="font-size: 1.1rem">@_error</p>
     }
     <GroupFormComponent UserInfo="@UserInfo" />
+    
+    <BalanceComponent UserInfo="@UserInfo"/>
 
 @code {
     [CascadingParameter(Name = "UserInfo")]
@@ -41,7 +46,6 @@
             if (UserInfo != null)
             {
                 GroupsInfo = await GroupService.GetGroupInfo(UserInfo.Username);
-
             }
         }
         catch (Exception)
@@ -65,4 +69,5 @@
 
         return $"/Group/{cleaned}";
     }
+    
 }

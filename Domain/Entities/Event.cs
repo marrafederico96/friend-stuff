@@ -39,4 +39,6 @@ public class Event
     [ForeignKey(name: "LocationId")]
     public Location? Location { get; set; }
 
+    public ICollection<Expense> Expenses { get; set; } = [];
+
 }

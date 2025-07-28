@@ -1,0 +1,15 @@
+@page "/Group/{GroupName}/{EventName}"
+@using FriendStuff.Components.Shared
+@using FriendStuff.Features.Auth.DTOs
+
+<section class="section">
+<EventComponent UserInfo="@Userinfo" GroupName="@GroupName" EventName="@EventName"/>
+</section>
+@code {
+    [Parameter]
+    public string? GroupName { get; set; }
+    [Parameter]
+    public string? EventName { get; set; }
+    [CascadingParameter(Name = "UserInfo")]
+    public UserInfoDto? Userinfo { get; set; }
+}

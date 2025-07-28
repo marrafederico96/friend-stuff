@@ -1,26 +1,51 @@
 @using FriendStuff.Features.Auth.DTOs
-@using FriendStuff.Features.Group.DTOs
+@using Microsoft.AspNetCore.WebUtilities
 
-@if (!string.IsNullOrEmpty(GroupName) && _group != null)
+@rendermode InteractiveServer
+
+@inject NavigationManager NavigationManager
+
+<div class="tab-button">
+    <button type="button" class="@GetTabClass("events")" @onclick="@(() => ChangeTab("events"))">Events</button>
+    <button type="button" class="@GetTabClass("members")" @onclick="@(() => ChangeTab("members"))">Members</button>
+</div>
+
+@if (_activeTab.Equals("events"))
 {
-    <h2 style="font-size: 2.2rem">@_group.GroupName</h2>
-    <EventComponent GroupName="@GroupName" UserInfo="@UserInfo"/>
+    <EventFormComponent GroupName="@GroupName" UserInfo="@UserInfo"/>
+}
+else
+{
+    <GroupMemberComponent UserInfo="@UserInfo" GroupName="@GroupName"/>
 }
 
-
 @code {
-    [Parameter] public string? GroupName { get; set; }
+    [Parameter] public required string GroupName { get; set; }
+    [Parameter] public required UserInfoDto UserInfo { get; set; }
 
-    [CascadingParameter(Name = "UserInfo")]
-    public UserInfoDto? UserInfo { get; set; }
-
-    private GroupDto? _group;
-
-    protected override void OnParametersSet()
+    private string _activeTab = "events";
+    
+    protected override void OnInitialized()
     {
-        if (UserInfo == null) return;
-        _group = UserInfo.UserGroups
-            .FirstOrDefault(g => g.NormalizeGroupName.Equals(GroupName));
-    }
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = QueryHelpers.ParseQuery(uri.Query);
 
+        if (query.TryGetValue("tab", out var tab))
+        {
+            _activeTab = tab;
+        }
+    }
+    
+    private void ChangeTab(string tab)
+    {
+        _activeTab = tab;
+        var uri = NavigationManager.GetUriWithQueryParameter("tab", tab);
+        NavigationManager.NavigateTo(uri, forceLoad:true);
+        StateHasChanged();
+    }
+    
+    private string GetTabClass(string tab)
+    {
+        return _activeTab == tab ? "tab-active" : "";
+    }
 }

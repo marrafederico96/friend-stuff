@@ -2,6 +2,7 @@ using System.Diagnostics;
 using FriendStuff.Data;
 using FriendStuff.Domain.Entities;
 using FriendStuff.Features.Auth.DTOs;
+using FriendStuff.Features.EventExpense.DTOs;
 using FriendStuff.Features.Group.DTOs;
 using FriendStuff.Features.GroupEvent.DTOs;
 using Microsoft.AspNetCore.Identity;
@@ -74,6 +75,10 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
             .ThenInclude(g => g.Group).ThenInclude(e => e.Events).ThenInclude(@event => @event.Location)
             .Include(user => user.UserGroups).ThenInclude(groupMember => groupMember.Group)
             .ThenInclude(userGroup => userGroup.GroupUsers).ThenInclude(groupMember => groupMember.UserMember)
+            .Include(user => user.UserGroups).ThenInclude(groupMember => groupMember.Group)
+            .ThenInclude(userGroup => userGroup.Events).ThenInclude(@event => @event.Expenses)
+            .ThenInclude(expense => expense.Participants)
+            .ThenInclude(expenseContribution => expenseContribution.Participant)
             .FirstOrDefaultAsync()?? throw new ArgumentException("User not found");
         
         return new UserInfoDto
@@ -97,12 +102,21 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
                                     GroupName = e.Group.GroupName,
                                     EndDate = e.EndDate,
                                     EventName = e.EventName,
+                                    NormalizedEventName = e.NormalizeEventName,
                                     StartDate = e.StartDate,
                                     LocationName = e.Location.LocationName,
                                     EventDescription = e.EventDescription,
                                     City = e.Location.City,
                                     StreetName = e.Location.StreetName,
-                                    StreetNumber = e.Location.StreetNumber
+                                    StreetNumber = e.Location.StreetNumber,
+                                    Expenses = e.Expenses.Select(ex => new ExpenseDto
+                                    {
+                                        ParticipantUsername = ex.Participants.Select(ex => ex.Participant.UserName).ToList(),
+                                        EventName = ex.Event.EventName,
+                                        Amount = ex.Amount,
+                                        PayerUsername = ex.Payer.UserName,
+                                        ExpenseName = ex.ExpenseName
+                                    }).ToList()
                                 };
                             return null;
                         }).ToList(),

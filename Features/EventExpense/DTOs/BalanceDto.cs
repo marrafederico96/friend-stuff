@@ -6,8 +6,8 @@ public record BalanceDto
 {
 
     [Required]
-    public required string PayerUsername { get; init; }
+    public string PayerUsername { get; set; } = string.Empty;
 
     [Required]
-    public required string DebtorUsername { get; init; }
+    public string DebtorUsername { get; set; } = string.Empty;
 }
