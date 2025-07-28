@@ -1,0 +1,27 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+}
+
+.form-container ::deep form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+
+}
+
+.form-container ::deep form input {
+    padding: 5px;
+}
+
+@media screen and (max-width: 600px) {
+    .form-container ::deep form {
+        justify-content: flex-start;
+    }
+}

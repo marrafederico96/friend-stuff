@@ -7,6 +7,7 @@
 
 @rendermode  InteractiveServer
 
+<div class="form-container">
 <EditForm Model="GroupData" FormName="GroupForm" OnValidSubmit="Submit">
     <InputText @bind-Value="GroupData.GroupName" requried placeholder="Group Name"/>
     @if (!string.IsNullOrEmpty(_error))
@@ -15,7 +16,7 @@
     } 
     <button>Create Group</button>
 </EditForm>
-
+</div>
 @code {
     private GroupDto GroupData { get; set; } = new GroupDto();
     private string? _error = string.Empty;
