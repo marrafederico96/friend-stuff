@@ -8,6 +8,12 @@ public class User : IdentityUser
     [Required]
     [MaxLength(100)]
     public override required string UserName { get; set; }
+
+    [Required] [MaxLength(100)] 
+    public override required string NormalizedUserName { get; set; }
+
+    [Required] [MaxLength(100)] 
+    public override string? NormalizedEmail { get; set; }
     
     [Required]
     [MaxLength(100)]

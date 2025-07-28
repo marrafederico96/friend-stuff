@@ -1,4 +1,5 @@
 using System;
+using FriendStuff.Features.Auth.DTOs;
 using FriendStuff.Features.Group.DTOs;
 
 namespace FriendStuff.Features.Group.Member;
@@ -7,18 +8,30 @@ public interface IGroupMemberService
 {
 
     /// <summary>
-    /// Add user to group
+    /// 
     /// </summary>
-    /// <param name="groupMemberDto">Object rappresent group member info</param>
+    /// <param name="memberUsername"></param>
+    /// <param name="groupName"></param>
+    /// <param name="adminUsername"></param>
     /// <returns></returns>
-    public Task AddMember(GroupMemberDto groupMemberDto);
+    public Task AddMember(string memberUsername, string groupName, string adminUsername);
 
     /// <summary>
-    /// Remove use to group
+    /// 
     /// </summary>
-    /// <param name="groupMemberDto">Object rappresent group member info</param>
+    /// <param name="memberUsername"></param>
+    /// <param name="groupName"></param>
+    /// <param name="adminUsername"></param>
     /// <returns></returns>
-    public Task RemoveMember(GroupMemberDto groupMemberDto);
+    public Task RemoveMember(string memberUsername, string groupName, string adminUsername);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
+    public Task<UserInfoDto> SearchUser(string username);
+
 
 
 }

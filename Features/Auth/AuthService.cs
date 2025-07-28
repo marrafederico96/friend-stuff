@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using FriendStuff.Data;
 using FriendStuff.Domain.Entities;
 using FriendStuff.Features.Auth.DTOs;
@@ -15,6 +16,8 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
         var user = new User
         {
             UserName = registerDto.Username.Trim(),
+            NormalizedUserName = registerDto.Username.Trim().ToUpperInvariant(),
+            NormalizedEmail = registerDto.Email.Trim().ToUpperInvariant(),
             Email = registerDto.Email.Trim(),
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName
@@ -57,14 +60,15 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
 
     public async Task<UserInfoDto> GetUserInfo(string username)
     {
-        
         var user = await context.Users
-            .Where(u => u.NormalizedUserName!.Equals(username.Trim().ToUpperInvariant()))
+            .Where(u => u.NormalizedUserName.Equals(username.Trim().ToUpperInvariant()))
             .Include(u => u.UserGroups)
             .ThenInclude(u => u.Group)
             .ThenInclude(userGroup => userGroup.Admin)
             .Include(u => u.UserGroups)
             .ThenInclude(g => g.Group).ThenInclude(e => e.Events).ThenInclude(@event => @event.Location)
+            .Include(user => user.UserGroups).ThenInclude(groupMember => groupMember.Group)
+            .ThenInclude(userGroup => userGroup.GroupUsers).ThenInclude(groupMember => groupMember.UserMember)
             .FirstOrDefaultAsync()?? throw new ArgumentException("User not found");
         
         return new UserInfoDto
@@ -75,7 +79,6 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
             Username = user.UserName,
             UserGroups = user.UserGroups.Select(u =>
             {
-                if (u.Group.Events != null)
                     return new GroupDto
                     {
                         GroupName = u.Group.GroupName,
@@ -97,9 +100,21 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
                                     StreetNumber = e.Location.StreetNumber
                                 };
                             return null;
+                        }).ToList(),
+                        GroupMembers = u.Group.GroupUsers.Select(gm =>
+                        {
+                            if (gm.UserMember != null)
+                                return new GroupMemberDto
+                                {
+                                    GroupName = gm.Group.GroupName,
+                                    Username = gm.UserMember.UserName,
+                                    AdminUsername = gm.Group.Admin.UserName,
+                                    JoinDate = gm.JoinDate,
+                                    MemberRole = gm.Role
+                                };
+                            return null;
                         }).ToList()
                     };
-                return null;
             }).ToList(),
         };
     }

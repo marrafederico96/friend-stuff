@@ -1,0 +1,98 @@
+@using FriendStuff.Domain.Entities.Enums
+@using FriendStuff.Features.Auth.DTOs
+@using FriendStuff.Features.Group.DTOs
+@using FriendStuff.Features.Group.Member
+
+@inject IGroupMemberService GroupMemberService
+@inject NavigationManager NavigationManager
+
+<div class="form-container">
+    <EditForm Model="UsernameDto" FormName="SearchUser" OnValidSubmit="SearchUser">
+        <DataAnnotationsValidator />
+        <InputText @bind-Value="UsernameDto.Username" type="search" placeholder="Search User" />
+        <button>Search</button>
+        @if (_userFound != null)
+        {
+            <p style="font-weight: bold; font-size: 1.1rem; margin: 10px 0;">@_userFound.Username 
+                <span>(@_userFound.FirstName @_userFound.LastName)</span>
+                <button @onclick="AddMember">Add</button>
+                </p>
+        }
+    </EditForm>
+</div>
+<ul>
+    @foreach (var member in _groupMember)
+    {
+        <li>@member.Username <span>(@member.MemberRole)</span> - <span>Join: @member.JoinDate.ToString("dd/MM/yyyy")</span>
+            @if (@member.MemberRole == MemberRole.Member)
+            {
+                <button class="btn-remove-member" @onclick="() => RemoveMember(member.Username)">Remove</button>
+            }
+        </li>
+    }
+</ul>
+
+@code {
+    [Parameter] public required UserInfoDto UserInfo { get; set; }
+    [Parameter] public string? GroupName { get; set; }
+
+    private UsernameDto UsernameDto { get; set; } = new UsernameDto();
+    private UserInfoDto? _userFound;
+    private GroupDto? _group;
+    private List<GroupMemberDto> _groupMember = [];
+    private string? _error = string.Empty;
+    
+    protected override void OnInitialized()
+    {
+        _group = UserInfo.UserGroups
+            .FirstOrDefault(g => g.NormalizeGroupName.Equals(GroupName));
+        if (_group != null) _groupMember = _group.GroupMembers;
+        _error = string.Empty;
+    }
+
+    private async Task SearchUser()
+    {
+        try
+        {
+        _userFound = await GroupMemberService.SearchUser(UsernameDto.Username);
+        UsernameDto = new UsernameDto();
+        }
+        catch (ArgumentException e)
+        {
+            _error = e.Message;
+        }
+    }
+
+    private async Task AddMember()
+    {
+        try
+        {
+            if (_userFound != null && GroupName != null)
+            {
+                await GroupMemberService.AddMember(_userFound.Username, GroupName, UserInfo.Username);
+                NavigationManager.Refresh();
+                _userFound = new UserInfoDto();
+            }
+        }
+        catch (ArgumentException e)
+        {
+            _error = e.Message;
+        }
+    }
+
+    private async Task RemoveMember(string memberUsername)
+    {
+        try
+        {
+            if (GroupName != null)
+            {
+                await GroupMemberService.RemoveMember(memberUsername, GroupName, UserInfo.Username);
+                NavigationManager.Refresh();
+            }
+        }
+        catch (ArgumentException e)
+        {
+            _error = e.Message;
+        }
+    }
+}

@@ -14,6 +14,7 @@ public record  GroupDto
     [Required(ErrorMessage = "Admin username cannot be empty")]
     public string AdminUsername { get; set; } = string.Empty;
 
-    public List<EventDto?>? GroupEvents { get; set; } = [];
+    public List<EventDto?> GroupEvents { get; set; } = [];
+    public List<GroupMemberDto> GroupMembers { get; set; } = [];
 
 }

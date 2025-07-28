@@ -1,30 +1,24 @@
-.form-container {
+.tab-button {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 10px;
 }
 
-.form-container ::deep form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 14px;
-    width: 400px;
-    border: 1px solid var(--txt-color);
+.tab-button button {
+    border: none;
+    padding-left: 0;
+    padding-right: 0;
+    transition: color 0.3s ease-in-out;
 }
 
-.form-container ::deep form label, .form-container ::deep form input {
-    width: 100%;
+.tab-button button:hover {
+    background-color: transparent;
+    color: var(--accent-color);
 }
 
-.form-container ::deep form input {
-    padding: 5px;
-}
-
-.form-container ::deep form button {
-    width: 100%;
+.tab-active {
+    border-bottom: 1px solid var(--txt-color) !important;
+    color: var(--accent-color);
 }

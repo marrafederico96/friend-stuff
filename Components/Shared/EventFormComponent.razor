@@ -1,0 +1,100 @@
+@using FriendStuff.Features.Auth.DTOs
+@using FriendStuff.Features.GroupEvent
+@using FriendStuff.Features.GroupEvent.DTOs
+
+@inject IEventService EventService
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<div class="group-link">
+    @if (_eventDto is { Count: > 0 })
+    {
+        foreach (var evt in _eventDto)
+        {
+            <a>
+                <p>@evt.EventName</p>
+                <p>Start. <span>@evt.StartDate.ToString("dd/MM/yyyy")</span></p>
+                <p>End: <span>@evt.EndDate.ToString("dd/MM/yyyy")</span></p>
+                <p>@evt.LocationName</p>
+            </a>
+        }
+    }
+    else
+    {
+        <p>No events found</p>
+    }
+</div>
+
+<div class="form-container">
+    <EditForm Model="EventData" FormName="EventForm" OnValidSubmit="CreateEvent">
+        <DataAnnotationsValidator />
+        <label>Event Name:
+            <InputText type="text" @bind-Value="EventData.EventName" required placeholder="Event name"/>
+        </label>
+        <label>Event Description:
+            <InputText type="text" @bind-Value="EventData.EventDescription" placeholder="Description"/>
+        </label>
+        <label>Start Date:
+            <InputDate @bind-Value="EventData.StartDate" required placeholder="Start date"/>
+        </label>
+        <label>End Date:
+            <InputDate @bind-Value="EventData.EndDate" required placeholder="End date"/>
+        </label>
+        <label>Location Name:
+            <InputText type="text" @bind-Value="EventData.LocationName" required placeholder="Location Name"/>
+        </label>
+        <label>City:
+            <InputText type="text" @bind-Value="EventData.City" placeholder="City"/>
+        </label>
+        <label>Street Name:
+            <InputText type="text" @bind-Value="EventData.StreetName" placeholder="Street Name"/>
+        </label>
+        <label>Street number:
+            <InputText type="text" @bind-Value="EventData.StreetNumber" placeholder="Street Number"/>
+        </label>
+        @if (!string.IsNullOrEmpty(_error))
+        {
+            <p class="error">@_error</p>
+        }
+        <ValidationSummary />
+        <button type="submit">Create</button>
+    </EditForm>
+</div>
+
+@code {
+    public EventDto EventData = new EventDto();
+    [Parameter] public required string GroupName { get; set; }
+    [Parameter] public required UserInfoDto UserInfo { get; set; }
+    private List<EventDto?> _eventDto = [];
+    private string? _error = string.Empty;
+    protected override void OnInitialized()
+    {
+        EventData.StartDate = DateTime.Today;
+        EventData.EndDate = DateTime.Today;
+    }
+    
+    protected override void OnParametersSet()
+    {
+        _eventDto = UserInfo.UserGroups
+            .Where(g => g.NormalizeGroupName.Equals(GroupName))
+            .SelectMany(g => g.GroupEvents)
+            .ToList();
+    }
+    
+    private async Task CreateEvent()
+    {
+        try
+        {
+            EventData.GroupName = GroupName;
+            EventData.Username = UserInfo.Username.Trim().ToUpperInvariant();
+            await EventService.CreateEvent(EventData);
+            EventData = new EventDto();
+            NavigationManager.Refresh();
+        }
+        catch (ArgumentException e)
+        {
+            _error = e.Message;
+        }
+    }
+}

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FriendStuff.Domain.Entities.Enums;
 
 namespace FriendStuff.Features.Group.DTOs;
 
@@ -11,6 +12,10 @@ public record GroupMemberDto
     public required string Username { get; init; }
 
     [Required]
-    public string? AdminUsername { get; init; }
+    public required string AdminUsername { get; init; }
+    
+    public MemberRole MemberRole { get; init; }
+    
+    public DateTime JoinDate { get; init; }
 
 }

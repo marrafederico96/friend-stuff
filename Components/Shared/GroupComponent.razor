@@ -9,8 +9,8 @@
 
 
 @code {
-    [Parameter]
-    public string? GroupName { get; set; }
+    [Parameter] public string? GroupName { get; set; }
+
     [CascadingParameter(Name = "UserInfo")]
     public UserInfoDto? UserInfo { get; set; }
 
@@ -18,11 +18,9 @@
 
     protected override void OnParametersSet()
     {
-        if (UserInfo != null)
-        {
-            _group = UserInfo.UserGroups
-                .FirstOrDefault(g => g.NormalizeGroupName.Equals(GroupName))!;
-        }
+        if (UserInfo == null) return;
+        _group = UserInfo.UserGroups
+            .FirstOrDefault(g => g.NormalizeGroupName.Equals(GroupName));
     }
 
 }

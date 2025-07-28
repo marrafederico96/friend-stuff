@@ -27,7 +27,7 @@ public class UserGroup
     [ForeignKey(name: "AdminId")]
     public User Admin { get; set; } = null!;
 
-    public ICollection<Event>? Events { get; set; }
+    public ICollection<Event> Events { get; set; } = [];
 
     public ICollection<GroupMember> GroupUsers { get; set; } = [];
 }
