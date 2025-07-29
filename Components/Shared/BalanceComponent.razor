@@ -11,8 +11,6 @@
 @rendermode InteractiveServer
 
 <h2 style="font-size: 2.2rem">Your Balance</h2>
-@if (_groupMembers.Count > 1)
-{
     <button type="button" @onclick="Calculate">Calculate Balance</button>
     @if (_balancesWithUsers.Any())
     {
@@ -50,12 +48,6 @@
             <button type="submit">Add refund</button>
         </EditForm>
     </div>
-}
-else
-{
-    <p>You need at least 2 users in a group to calculate balances.</p>
-}
-
 
 @code {
     [Parameter]
