@@ -14,7 +14,7 @@
     <MudItem xs="12" md="6">
         <MudPaper Class="pa-4">
             <MudText Typo="Typo.h5" Class="mb-2">Your Balance</MudText>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Calculate">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@Calculate">
                 Calculate Balance
             </MudButton>
 
@@ -28,13 +28,13 @@
                                 @switch (amount)
                                 {
                                     case < 0:
-                                        @:<strong>@username</strong> owes you <strong>@Math.Abs(amount):0.00€</strong>
+                                        @:<strong>@username</strong> owes you <strong>@Math.Abs(amount)€</strong>
                                         break;
                                     case > 0:
-                                        @:You owe <strong>@amount:0.00€</strong> to <strong>@username</strong>
+                                        @:You owe <strong>@amount€</strong> to <strong>@username</strong>
                                         break;
-                                    default:
-                                        @:No debt with <strong>@username</strong> 
+                                    case 0:
+                                        @:<strong>No debt</strong> 
                                         break;
                                 }
                             </MudText>
@@ -74,7 +74,7 @@
     [Parameter]
     public UserInfoDto? UserInfo { get; set; }
 
-    private List<GroupMemberDto?> _groupMembers = [];
+    private List<GroupMemberDto> _groupMembers = [];
     private readonly List<(string Username, decimal Balance)> _balancesWithUsers = [];
     private RefundDto _refundDto = new();
     private string _error = string.Empty;
@@ -86,7 +86,7 @@
         {
             _groupMembers = UserInfo.UserGroups.SelectMany(u => u.GroupMembers.Distinct()).ToList();
 
-            foreach (var u in _groupMembers.Where(m => m != null && m.Username != UserInfo.Username))
+            foreach (var u in _groupMembers.Where(m => m.Username != UserInfo.Username))
             {
                 var dto = new BalanceDto
                 {
