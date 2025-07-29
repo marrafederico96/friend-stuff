@@ -37,12 +37,14 @@
 
         @if (UserInfo != null)
         {   
+            <div style="display: flex; flex-direction: column; justify-content: space-between; align-content: center;">
             <MudNavLink Href="/" Match="NavLinkMatch.All">@UserInfo.Username</MudNavLink>
             <MudNavLink>
-            <form action="/Account/Logout" method="post" style="margin:0; padding:0;">
-                <MudButton Variant="Variant.Text" Style="width: 100%; justify-content: left" Class="pl-0" ButtonType="ButtonType.Submit">Logout</MudButton>
-            </form>
+                <form action="/Account/Logout" method="post" style="margin:0; padding:0;">
+                    <MudButton Variant="Variant.Text" Style="width: 100%; justify-content: left" Class="pl-0" ButtonType="ButtonType.Submit">Logout</MudButton>
+                </form>
             </MudNavLink>
+            </div>
         }
         else
         {

@@ -9,13 +9,13 @@
 <MudGrid Justify="Justify.Center" Class="mt-10">
     <MudItem xs="12" sm="10" md="8" lg="6" xl="5">
     <MudCard Class="pa-4" Elevation="4">
-        <MudStack Spacing="2">
             @if (_isLogin)
             {
-                <MudText Typo="Typo.h5" Class="mb-2">Login</MudText>
+                <MudText Typo="Typo.h5" Class="mb-4">Login</MudText>
                 <form method="post" action="/Account/Login">
-                    <MudTextField T="string" Label="Email" InputType="InputType.Email" Name="Email" Required="true" Adornment="Adornment.Start"/>
-                    <MudTextField T="string" Label="Password" InputType="InputType.Password" Name="Password" Required="true" Adornment="Adornment.Start"/>
+                    <MudStack Spacing="2">
+                    <MudTextField T="string" Label="Email" InputType="InputType.Email" Name="Email" Required="true" />
+                    <MudTextField T="string" Label="Password" InputType="InputType.Password" Name="Password" Required="true" />
 
                     @if (!string.IsNullOrEmpty(Error))
                     {
@@ -26,31 +26,35 @@
                         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Login</MudButton>
                         <MudText>New user? <MudLink Href="/Account/Register">Register</MudLink></MudText>
                     </MudStack>
+                    </MudStack>
+                    
                 </form>
             }
             else
             {
-                <MudText Typo="Typo.h5" Class="mb-2">Register</MudText>
+                <MudText Typo="Typo.h5" Class="mb-4">Register</MudText>
                 <EditForm Model="RegisterData" OnValidSubmit="Register" FormName="RegisterForm">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <MudStack Spacing="2">
                         <MudTextField T="string" @bind-Value="RegisterData.FirstName" Label="First Name" Required="true"/>
                         <MudTextField T="string" @bind-Value="RegisterData.LastName" Label="Last Name" Required="true"/>
                         <MudTextField T="string" @bind-Value="RegisterData.Username" Label="Username" Required="true"/>
                         <MudTextField T="string" InputType="InputType.Email" @bind-Value="RegisterData.Email" Label="Email" Required="true"/>
                         <MudTextField T="string" InputType="InputType.Password" @bind-Value="RegisterData.Password" Label="Password" Required="true"/>
                         <MudTextField T="string" InputType="InputType.Password" @bind-Value="RegisterData.ConfirmPassword" Label="Confirm Password" Required="true"/>
+                    </MudStack>
+                    @if (!string.IsNullOrEmpty(_error))
+                    {
+                        <MudText Color="Color.Error">@_error</MudText>
+                    }
 
-                        @if (!string.IsNullOrEmpty(_error))
-                        {
-                            <MudText Color="Color.Error">@_error</MudText>
-                        }
-
-                        <MudStack Direction="Row" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mt-4">
-                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Register</MudButton>
-                            <MudText>Already registered? <MudLink Href="/Account/Login">Login</MudLink></MudText>
-                        </MudStack>
+                    <MudStack Direction="Row" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mt-4">
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Register</MudButton>
+                        <MudText>Already registered? <MudLink Href="/Account/Login">Login</MudLink></MudText>
+                    </MudStack>
                 </EditForm>
             }
-        </MudStack>
     </MudCard>
     </MudItem>
 </MudGrid>

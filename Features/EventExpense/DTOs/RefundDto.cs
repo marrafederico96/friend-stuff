@@ -5,12 +5,13 @@ namespace FriendStuff.Features.EventExpense.DTOs;
 public record RefundDto
 {
 
-    [Required] 
+    [Required(ErrorMessage = "Payer Username required")] 
     public string PayerUsername { get; set; } = string.Empty;
 
-    [Required]
     public string DebtorUsername { get; set; } = string.Empty;
 
-    [Required] public decimal Amount { get; set; }
+    [Required(ErrorMessage = "Amount required")]
+    [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than zero.")]
+    public decimal Amount { get; set; }
 
 }

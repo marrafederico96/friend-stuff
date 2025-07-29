@@ -52,18 +52,18 @@
     <MudItem xs="12" md="6">
         <MudPaper Class="pa-4 mt-4 mt-md-0">
             <MudText Typo="Typo.h5" Class="mb-2">Add Refund</MudText>
-            <EditForm Model="_refundDto" OnValidSubmit="AddRefund">
+            <EditForm Model="_refundDto" FormName="RefundForm" OnValidSubmit="AddRefund">
                 <DataAnnotationsValidator />
                 <MudStack Spacing="2">
-                    <MudNumericField T="decimal" @bind-Value="_refundDto.Amount" Label="Amount" Required="true" Adornment="Adornment.Start" AdornmentText="€" />
+                    <MudNumericField T="decimal" @bind-Value="_refundDto.Amount" Label="Amount" Required="true" />
                     <MudTextField T="string" @bind-Value="_refundDto.PayerUsername" Label="Payer Username" Required="true" />
 
                     @if (!string.IsNullOrEmpty(_error))
                     {
-                        <MudAlert Severity="Severity.Error" Dense="true">@_error</MudAlert>
+                        <MudText Color="Color.Error">@_error</MudText>
                     }
 
-                    <MudButton Type="Submit" Variant="Variant.Filled" Color="Color.Secondary">Add Refund</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Add Refund</MudButton>
                 </MudStack>
             </EditForm>
         </MudPaper>
@@ -105,12 +105,24 @@
     }
 
     private async Task AddRefund()
-    {
+    {   
+        _error = string.Empty;
         try
         {
             if (UserInfo != null)
             {
                 _refundDto.DebtorUsername = UserInfo.Username;
+                if (_refundDto.Amount <= 0)
+                {
+                    _error = "Amount must be greater than zero.";
+                    return;
+                }
+                if (string.IsNullOrWhiteSpace(_refundDto.PayerUsername))
+                {
+                    _error = "Payer Username is required.";
+                    return;
+                }
+                
                 await RefundService.AddRefund(_refundDto);
                 _refundDto = new RefundDto();
                 NavigationManager.NavigateTo("/", forceLoad: true);
