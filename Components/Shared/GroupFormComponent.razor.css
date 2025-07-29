@@ -3,7 +3,6 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    width: 100%;
 }
 
 .form-container > ::deep form {
@@ -19,4 +18,10 @@
 
 .form-container > ::deep form input {
     padding: 5px;
+}
+
+@media screen and (max-width: 600px) {
+    .form-container > ::deep form{
+        flex-direction: column;
+    }
 }
