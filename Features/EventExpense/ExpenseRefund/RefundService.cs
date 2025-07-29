@@ -2,7 +2,6 @@ using FriendStuff.Data;
 using FriendStuff.Domain.Entities;
 using FriendStuff.Features.EventExpense.DTOs;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace FriendStuff.Features.EventExpense.ExpenseRefund;
 
@@ -16,12 +15,6 @@ public class RefundService(UserManager<User> userManager,FriendStuffDbContext co
 
         var debtor = await userManager.FindByNameAsync(refundDto.DebtorUsername)
                      ?? throw new ArgumentException("Payer not found");
-
-
-        var totalDebt = await context.ExpenseContributions
-            .Include(ec => ec.Expense)
-            .Where(ec => ec.ParticipantId == debtor.Id && ec.Expense.PayerId == payer.Id && ec.AmountOwed > 0)
-            .SumAsync(c => c.AmountOwed);
 
         var balanceDto = new BalanceDto
         {

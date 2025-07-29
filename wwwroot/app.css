@@ -73,11 +73,13 @@ button:hover {
     flex-wrap: wrap;
     gap: 20px;
     align-items: center;
+    width: 100%;
 }
 
 .group-link a {
     border: 1px solid var(--txt-color);
     padding: 20px;
+    width: 100%;
     transition: background-color 0.3s ease-in-out;
 }
 

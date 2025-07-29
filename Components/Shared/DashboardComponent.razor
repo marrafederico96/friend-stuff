@@ -1,15 +1,15 @@
 ﻿@using FriendStuff.Features.Auth.DTOs
-@using FriendStuff.Features.EventExpense
-@using FriendStuff.Features.EventExpense.DTOs
 @using FriendStuff.Features.Group
 @using FriendStuff.Features.Group.DTOs
 
 @inject IGroupService GroupService
-@inject IExpenseService ExpenseService
 
-<h2 style="font-size: 2.2rem">Your Groups</h2>
+<div style="display: flex;justify-content: space-between; align-content: center; width: 100%">
+    <h2 style="font-size: 2.2rem">Your Groups</h2>
+    <GroupFormComponent UserInfo="@UserInfo" />
+</div>
 
-    @if (GroupsInfo is { Count: > 0 })
+@if (GroupsInfo is { Count: > 0 })
     {
         <div class="group-link">
         @foreach (var group in GroupsInfo)
@@ -25,7 +25,7 @@
     {
         <p style="font-size: 1.1rem">@_error</p>
     }
-    <GroupFormComponent UserInfo="@UserInfo" />
+
     
     <BalanceComponent UserInfo="@UserInfo"/>
 
