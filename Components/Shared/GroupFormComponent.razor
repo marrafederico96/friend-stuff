@@ -7,8 +7,7 @@
 
 @rendermode  InteractiveServer
 
-<div>
-    
+<div class="form-container">
     <EditForm Model="GroupData" FormName="GroupForm" OnValidSubmit="Submit">
         <InputText @bind-Value="GroupData.GroupName" requried placeholder="Group Name"/>
         @if (!string.IsNullOrEmpty(_error))

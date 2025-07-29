@@ -6,17 +6,17 @@
     width: 100%;
 }
 
-div > ::deep form {
+.form-container > ::deep form {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
 }
 
-div > ::deep form button {
+.form-container > ::deep form button {
     padding: 5px;
 }
 
-div > ::deep form input {
+.form-container > ::deep form input {
     padding: 5px;
 }
