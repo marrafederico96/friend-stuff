@@ -10,51 +10,57 @@
 
 @rendermode InteractiveServer
 
-<h2 style="font-size: 2.2rem">Balance</h2>
-<button type="button" @onclick="Calculate">Calculate Balance</button>
-@if (_balancesWithUsers.Any())
+<h2 style="font-size: 2.2rem">Your Balance</h2>
+@if (_groupMembers.Count > 1)
 {
+    <button type="button" @onclick="Calculate">Calculate Balance</button>
     @if (_balancesWithUsers.Any())
     {
-        <ul>
-            @foreach (var (username, amount) in _balancesWithUsers)
-            {
-                switch (amount)
-                {
-                    case < 0:
-                        <li><strong>@username</strong> owes you <strong>@Math.Abs(amount).ToString("0.00")€</strong></li>
-                        break;
-                    case > 0:
-                        <li>You owe <strong>@amount.ToString("0.00")€</strong> to <strong>@username</strong></li>
-                        break;
-                    case 0:
-                        <li>No debt</li>
-                        break;
-                }
-            }
-        </ul>
-    }
-}
-<h2>Add Refund</h2>
-<div class="form-container">
-    <EditForm Model="_refundDto" FormName="RefundForm" OnValidSubmit="AddRefund">
-        <InputNumber @bind-Value="_refundDto.Amount" required placeholder="Amount" />
-        <InputText @bind-Value="_refundDto.PayerUsername" required placeholder="Username" />
-        @if (!string.IsNullOrEmpty(_error))
+        @if (_balancesWithUsers.Any())
         {
-            <p class="error">@_error</p>
+            <ul>
+                @foreach (var (username, amount) in _balancesWithUsers)
+                {
+                    switch (amount)
+                    {
+                        case < 0:
+                            <li><strong>@username</strong> owes you <strong>@Math.Abs(amount).ToString("0.00")€</strong></li>
+                            break;
+                        case > 0:
+                            <li>You owe <strong>@amount.ToString("0.00")€</strong> to <strong>@username</strong></li>
+                            break;
+                        case 0:
+                            <li>No debt</li>
+                            break;
+                    }
+                }
+            </ul>
         }
-        <button type="submit">Add refund</button>
-    </EditForm>
-</div>
+    }
+
+    <h2>Add Refund</h2>
+    <div class="form-container">
+        <EditForm Model="_refundDto" FormName="RefundForm" OnValidSubmit="AddRefund">
+            <InputNumber @bind-Value="_refundDto.Amount" required placeholder="Amount" />
+            <InputText @bind-Value="_refundDto.PayerUsername" required placeholder="Username" />
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <p class="error">@_error</p>
+            }
+            <button type="submit">Add refund</button>
+        </EditForm>
+    </div>
+}
+else
+{
+    <p>You need at least 2 users in a group to calculate balances.</p>
+}
+
 
 @code {
     [Parameter]
     public UserInfoDto? UserInfo { get; set; }
 
-    private BalanceDto _balanceDto = new BalanceDto();
-    private decimal _balance = 0;
-    private List<ExpenseDto> _expenses = [];
     private List<GroupMemberDto?> _groupMembers = [];
     private readonly List<(string Username, decimal Balance)> _balancesWithUsers = [];
     private RefundDto _refundDto = new RefundDto();
@@ -65,8 +71,6 @@
         if (UserInfo != null)
         {
             _groupMembers = UserInfo.UserGroups.SelectMany(u => u.GroupMembers.Distinct()).ToList();
-            var events = UserInfo.UserGroups.SelectMany(e => e.GroupEvents).ToList();
-            _expenses = events.SelectMany(ex => ex.Expenses).ToList();
 
             foreach (var u in _groupMembers.Where(m => m != null && m.Username != UserInfo.Username))
             {
@@ -82,8 +86,6 @@
                 {
                     _balancesWithUsers.Add((u.Username, result));
                 }
-
-                _balance += result;
             }
         }
     }
