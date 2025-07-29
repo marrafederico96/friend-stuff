@@ -27,8 +27,7 @@
                     <MudText Typo="Typo.subtitle1" Class="mt-4 mb-2">Participants</MudText>
                         @foreach (var user in _selectableMembers)
                         {
-                            <MudCheckBox T="bool" Label="@user.Username" checked="@ExpenseDto.ParticipantUsername.Contains(user.Username)"
-                                         @onchange="@((e) => OnParticipantCheckboxChange(e, user.Username))" />                        }
+                            <MudCheckBox T="bool" Label="@user.Username" @bind-Value="_participants[user.Username]" />                        }
                 </MudItem>
                 @if (!string.IsNullOrEmpty(_error))
                 {
@@ -97,7 +96,7 @@
 
     private ExpenseDto ExpenseDto { get; set; } = new ExpenseDto();
     private List<GroupMemberDto> _selectableMembers = [];
-    
+    private Dictionary<string, bool> _participants = new Dictionary<string, bool>();
     private EventDto? _event;
     private GroupDto? _group;
 
@@ -115,24 +114,13 @@
                 .Where(member => member.Username != UserInfo.Username).ToList();
         }
         
+        foreach (var member in _selectableMembers)
+        {
+            _participants.Add(member.Username, ExpenseDto.ParticipantUsername.Contains(member.Username));
+        }
+        
     }
 
-    private void OnParticipantCheckboxChange(ChangeEventArgs e, string username)
-    {
-        if (e.Value != null && (bool)e.Value)
-        {
-            if (!ExpenseDto.ParticipantUsername.Contains(username))
-            {
-                ExpenseDto.ParticipantUsername.Add(username);
-            }
-        }
-        else
-        {
-            ExpenseDto.ParticipantUsername.Remove(username);
-        }
-    }
-
-    
     public async Task AddExpense()
     {
         try
@@ -141,15 +129,32 @@
             {
                 ExpenseDto.PayerUsername = UserInfo.Username;
                 ExpenseDto.EventName = _event.NormalizedEventName;
-
+                
+                ExpenseDto.ParticipantUsername = _participants
+                    .Where(kvp => kvp.Value)
+                    .Select(kvp => kvp.Key)
+                    .ToList();
+                
                 await ExpenseService.AddExpense(ExpenseDto);
+                
                 ExpenseDto = new ExpenseDto();
+                InitializeParticipantsDictionary();
+
                 NavigationManager.Refresh();
             }
         }
         catch (ArgumentException e)
         {
             _error = e.Message;
+        }
+    }
+    
+    private void InitializeParticipantsDictionary()
+    {
+        _participants.Clear();
+        foreach (var member in _selectableMembers)
+        {
+            _participants[member.Username] = false;
         }
     }
 }

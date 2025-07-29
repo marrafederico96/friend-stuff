@@ -6,16 +6,16 @@ namespace FriendStuff.Features.Group.DTOs;
 public record GroupMemberDto
 {
     [Required]
-    public required string GroupName { get; init; }
+    public required string GroupName { get; set; }
 
     [Required]
-    public required string Username { get; init; }
+    public required string Username { get; set; }
 
     [Required]
-    public required string AdminUsername { get; init; }
+    public required string AdminUsername { get; set; }
     
-    public MemberRole MemberRole { get; init; }
+    public MemberRole MemberRole { get; set; }
     
-    public DateTime JoinDate { get; init; }
+    public DateTime JoinDate { get; set; }
 
 }
