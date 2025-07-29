@@ -6,68 +6,90 @@
 @inject NavigationManager NavigationManager
 
 @rendermode InteractiveServer
+<MudPopoverProvider />
 
-<div class="group-link">
+
+<MudPaper Class="pa-4" Elevation="3">
+<MudText Typo="Typo.h4" Class="mb-4">Your Events</MudText>
     @if (_eventDto is { Count: > 0 })
     {
-        foreach (var evt in _eventDto.OfType<EventDto>())
-        {
-            <a href="/Group/@GroupName/@GenerateEventHref(evt.NormalizedEventName)">
-                <p>@evt.EventName</p>
-                <p>Start. <span>@evt.StartDate.ToString("dd/MM/yyyy")</span></p>
-                <p>End: <span>@evt.EndDate.ToString("dd/MM/yyyy")</span></p>
-                <p>@evt.LocationName</p>
-            </a>
-        }
+        <MudGrid>
+            @foreach (var evt in _eventDto)
+            {
+                <MudItem xs="12">
+                    <MudCard Class="h-full hover:shadow-md transition-shadow">
+                        <MudCardContent>
+                            <MudText Typo="Typo.h6">@evt.EventName</MudText>
+                            <MudText Typo="Typo.body2">@evt.LocationName</MudText>
+                            <MudText Typo="Typo.caption">@($"Start {evt.StartDate:dd-MM-yyyy} End {evt.EndDate:dd-MM-yyyy}")</MudText>                       
+                            </MudCardContent>
+                        <MudCardActions>
+                            <MudLink Href="@($"/Group/{GroupName}/{GenerateEventHref(evt.NormalizedEventName)}")">
+                                View
+                            </MudLink>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
     }
     else
     {
-        <p>No events found</p>
+        <MudText>No events found.</MudText>
     }
-</div>
+    <MudDivider Class="my-6" />
+    
+    <MudText Typo="Typo.h5">Create New Event</MudText>
+    
+    <EditForm Model="EventData" FormName="EventForm" OnValidSubmit="CreateEvent" Class="mt-4">
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="EventData.EventName" Label="Event Name" Required="true"/>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="EventData.EventDescription" Label="Event Description"/>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudDatePicker @bind-Date="@EventData.StartDate" Label="Start Date" Required="true"/>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudDatePicker @bind-Date="EventData.EndDate" Label="End Date" Required="true"/>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="EventData.LocationName" Label="Location Name" Required="true"/>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="EventData.City" Label="City"/>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="EventData.StreetName" Label="Street Name"/>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="EventData.StreetNumber" Label="Street Number"/>
+            </MudItem>
 
-<div class="form-container">
-    <EditForm Model="EventData" FormName="EventForm" OnValidSubmit="CreateEvent">
-        <DataAnnotationsValidator />
-        <label>Event Name:
-            <InputText type="text" @bind-Value="EventData.EventName" required placeholder="Event name"/>
-        </label>
-        <label>Event Description:
-            <InputText type="text" @bind-Value="EventData.EventDescription" placeholder="Description"/>
-        </label>
-        <label>Start Date:
-            <InputDate @bind-Value="EventData.StartDate" required placeholder="Start date"/>
-        </label>
-        <label>End Date:
-            <InputDate @bind-Value="EventData.EndDate" required placeholder="End date"/>
-        </label>
-        <label>Location Name:
-            <InputText type="text" @bind-Value="EventData.LocationName" required placeholder="Location Name"/>
-        </label>
-        <label>City:
-            <InputText type="text" @bind-Value="EventData.City" placeholder="City"/>
-        </label>
-        <label>Street Name:
-            <InputText type="text" @bind-Value="EventData.StreetName" placeholder="Street Name"/>
-        </label>
-        <label>Street number:
-            <InputText type="text" @bind-Value="EventData.StreetNumber" placeholder="Street Number"/>
-        </label>
-        @if (!string.IsNullOrEmpty(_error))
-        {
-            <p class="error">@_error</p>
-        }
-        <ValidationSummary />
-        <button type="submit">Create</button>
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <MudItem xs="12">
+                    <MudText Color="Color.Error">@_error</MudText>
+                </MudItem>
+            }
+
+            <MudItem xs="12">
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">
+                    Create Event
+                </MudButton>
+            </MudItem>
+        </MudGrid>
     </EditForm>
-</div>
-
+</MudPaper>
 @code {
     public EventDto EventData = new EventDto();
     [Parameter] public required string GroupName { get; set; }
     [Parameter] public required UserInfoDto UserInfo { get; set; }
     private List<EventDto?> _eventDto = [];
     private string? _error = string.Empty;
+    
     protected override void OnInitialized()
     {
         EventData.StartDate = DateTime.Today;
@@ -89,7 +111,11 @@
             EventData.GroupName = GroupName;
             EventData.Username = UserInfo.Username.Trim().ToUpperInvariant();
             await EventService.CreateEvent(EventData);
-            EventData = new EventDto();
+            EventData = new EventDto
+            {
+                StartDate = DateTime.Today,
+                EndDate = DateTime.Today
+            };
             NavigationManager.Refresh();
         }
         catch (ArgumentException e)

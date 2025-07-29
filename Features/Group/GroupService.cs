@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.RegularExpressions;
 using FriendStuff.Data;
 using FriendStuff.Domain.Entities;
@@ -22,11 +23,12 @@ public partial class GroupService(FriendStuffDbContext context, UserManager<User
     {
         var admin = await userManager.FindByNameAsync(groupDto.AdminUsername)
                     ?? throw new ArgumentException("Admin not found");
+        
         if (string.IsNullOrEmpty(groupDto.GroupName))
         {
             throw new ArgumentException("Group Name cannot be empty");
         }
-        
+
         UserGroup newGroup = new()
         {
             GroupName = groupDto.GroupName,
@@ -35,6 +37,14 @@ public partial class GroupService(FriendStuffDbContext context, UserManager<User
             AdminId = admin.Id,
         };
 
+        var existingGroup = await context.UserGroups
+            .FirstOrDefaultAsync(g => g.NormalizeGroupName == newGroup.NormalizeGroupName
+                                      && g.AdminId == newGroup.AdminId);
+        if (existingGroup != null)
+        {
+            throw new ArgumentException("Group already exists");
+        }
+        
         await context.UserGroups.AddAsync(newGroup);
         await context.SaveChangesAsync();
 

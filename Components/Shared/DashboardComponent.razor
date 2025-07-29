@@ -4,30 +4,45 @@
 
 @inject IGroupService GroupService
 
-<div style="display: flex;justify-content: space-between; align-content: center; width: 100%">
-    <h2 style="font-size: 2.2rem">Your Groups</h2>
-    <GroupFormComponent UserInfo="@UserInfo" />
-</div>
+<MudGrid>
+    <MudItem xs="12">
+        <MudPaper Class="pa-4 mb-4">
+        <MudText Typo="Typo.h4">Your Groups</MudText>
+        </MudPaper>
+        <GroupFormComponent UserInfo="@UserInfo"/>
+    </MudItem>
 
-@if (GroupsInfo is { Count: > 0 })
+    @if (GroupsInfo is { Count: > 0 })
     {
-        <div class="group-link">
         @foreach (var group in GroupsInfo)
-        { 
-            <a href="@GenerateGroupHref(group.GroupName)">
-                <p>@group.GroupName</p>
-                <p>Members: @group.Members.Count</p>
-            </a>
+        {
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <MudCard>
+                    <MudLink Style="text-decoration: none;" Href="@GenerateGroupHref(group.GroupName)">
+                        <MudCardContent>
+                            <MudText Typo="Typo.h6" Style="color: #c2c2c5">
+                                @group.GroupName
+                            </MudText>
+                            <MudText  Style="color: #c2c2c5">
+                                @group.Members.Count @(" Member" + (group.Members.Count == 1 ? "" : "s"))
+                            </MudText>
+                        </MudCardContent>
+                    </MudLink>
+                </MudCard>
+            </MudItem>
         }
-        </div>
     }
     else
     {
-        <p style="font-size: 1.1rem">@_error</p>
+        <MudItem xs="12">
+            <MudText Color="Color.Error">@_error</MudText>
+        </MudItem>
     }
 
-    
-    <BalanceComponent UserInfo="@UserInfo"/>
+    <MudItem xs="12" class="mt-6">
+        <BalanceComponent UserInfo="@UserInfo" />
+    </MudItem>
+</MudGrid>
 
 @code {
     [CascadingParameter(Name = "UserInfo")]
@@ -35,11 +50,11 @@
 
     [Parameter]
     public string? GroupName { get; set; }
-    
+
     private List<GroupInfoDto>? GroupsInfo { get; set; }
-    private string? _error = string.Empty;
+    private string? _error = "No groups found";
+
     protected override async Task OnParametersSetAsync()
-    
     {
         try
         {
@@ -48,12 +63,12 @@
                 GroupsInfo = await GroupService.GetGroupInfo(UserInfo.Username);
             }
         }
-        catch (Exception)
+        catch
         {
             _error = "No groups found";
         }
     }
-    
+
     private string GenerateGroupHref(string groupName)
     {
         if (string.IsNullOrWhiteSpace(groupName))
@@ -61,13 +76,11 @@
 
         var cleaned = new string(groupName
             .ToLowerInvariant()
-            .TrimEnd()
-            .TrimStart()
+            .Trim()
             .Replace(" ", "-")
             .Where(c => char.IsLetterOrDigit(c) || c == '-')
             .ToArray());
 
         return $"/Group/{cleaned}";
     }
-    
 }

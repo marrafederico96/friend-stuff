@@ -20,7 +20,91 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="MudBlazor" Version="8.10.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_accordion.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_alert.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_animations.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_autocomplete.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_badge.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_body.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_breadcrumb.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_button.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_card.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_carousel.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_chart.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_checkbox.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_chip.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_colorpicker.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_common.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_datafilter.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_datalist.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_datepicker.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_dialog.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_dropdown.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_dropzone.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_editor.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_expander.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_fieldset.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_footer.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_form-field.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_form.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_gauge.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_google-map.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_gravatar.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_grid.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_header.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_icons.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_image.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_input.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_layout.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_link.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_listbox.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_login.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_lookup.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_mask.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_menu.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_navigation.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_notification.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_numeric.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_overlay-panel.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_pager.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_panel-menu.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_panel.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_picklist.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_profile-menu.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_progressbar.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_radio.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_rating.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_scheduler.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_scrollbar.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_security-code.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_selectbar.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_sidebar-toggle.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_sidebar.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_slider.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_spacing.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_speech-to-text-button.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_splitbutton.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_splitter.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_ssrsviewer.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_stack.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_steps.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_switch.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_tabs.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_textarea.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_textbox.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_timeline.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_timespanpicker.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_toc.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_tooltip.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_tree.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_typography.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_upload.scss" />
+    <_ContentIncludedByDefault Remove="wwwroot\components\blazor\_utilities.scss" />
   </ItemGroup>
 
 </Project>

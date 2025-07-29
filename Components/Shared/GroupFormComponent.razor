@@ -7,16 +7,16 @@
 
 @rendermode  InteractiveServer
 
-<div class="form-container">
+<MudPaper Class="pa-4">
     <EditForm Model="GroupData" FormName="GroupForm" OnValidSubmit="Submit">
-        <InputText @bind-Value="GroupData.GroupName" requried placeholder="Group Name"/>
+        <MudTextField T="string" @bind-Value="GroupData.GroupName"  Label="Group Name"/>
         @if (!string.IsNullOrEmpty(_error))
         {
-            <p class="error">@_error</p>
+            <MudText Color="Color.Error">@_error</MudText>
         }
-        <button>Create Group</button>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto mt-2 mb-2">Create Group</MudButton>
     </EditForm>
-    </div>
+</MudPaper>
 
 @code {
     private GroupDto GroupData { get; set; } = new GroupDto();
@@ -33,11 +33,16 @@
             {
                 GroupData.AdminUsername = UserInfo.Username;
             }
+
             await GroupService.CreateGroup(GroupData);
             GroupData = new GroupDto();
-            NavigationManager.NavigateTo("/", forceLoad:true);
+            NavigationManager.NavigateTo("/", forceLoad: true);
         }
         catch (ArgumentException e)
+        {
+            _error = e.Message;
+        }
+        catch (Exception e)
         {
             _error = e.Message;
         }

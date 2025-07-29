@@ -9,6 +9,7 @@ using FriendStuff.Features.GroupEvent;
 using FriendStuff.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,10 +37,11 @@ builder.Services.AddAuthentication(options =>
         });
     });
 
-builder.Services.AddDbContext<FriendStuffDbContext>(options =>
+builder.Services.AddDbContextFactory<FriendStuffDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
 
 builder.Services.AddIdentityCore<User>(options =>
     {
@@ -47,6 +49,9 @@ builder.Services.AddIdentityCore<User>(options =>
     })
     .AddEntityFrameworkStores<FriendStuffDbContext>()
     .AddSignInManager();
+
+
+builder.Services.AddMudServices();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGroupService, GroupService>();

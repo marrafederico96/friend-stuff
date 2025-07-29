@@ -1,10 +1,12 @@
 @page "/Group/{GroupName}/{EventName}"
 @using FriendStuff.Components.Shared
 @using FriendStuff.Features.Auth.DTOs
+@using Microsoft.AspNetCore.Authorization
 
-<section class="section">
+@attribute [Authorize]
+
 <EventComponent UserInfo="@Userinfo" GroupName="@GroupName" EventName="@EventName"/>
-</section>
+
 @code {
     [Parameter]
     public string? GroupName { get; set; }

@@ -1,16 +1,18 @@
 @page "/Group/{GroupName}"
 
+@attribute [Authorize]
 
 @using FriendStuff.Features.Auth.DTOs
 @using FriendStuff.Features.Group.DTOs
 @using FriendStuff.Components.Shared
+@using Microsoft.AspNetCore.Authorization
 
 @if (!string.IsNullOrEmpty(GroupName) && _group != null)
 {
-    <section class="section">
-    <h2 style="font-size: 2.2rem">@_group.GroupName</h2>
-    <GroupComponent GroupName="@GroupName" UserInfo="@UserInfo"/>
-    </section>
+    <MudPaper Class="pa-4 mb-4" Elevation="3">
+    <MudText Typo="Typo.h4" Class="mb-2">@_group.GroupName</MudText>
+    </MudPaper>
+        <GroupComponent GroupName="@GroupName" UserInfo="@UserInfo" />
 }
 
 

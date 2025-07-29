@@ -6,59 +6,54 @@
 
 @rendermode InteractiveServer
 
-<div class="form-container">
-    @if (_isLogin)
-    {
-            <form method="post" action="/Account/Login">
-                <h2>Login</h2>
-                <label>Email:
-                    <input  Name="Email" type="text" placeholder="Email" required />
-                    </label>
-                <label>Password:
-                    <input Name="Password"  required type="password" placeholder="Password" />
-                    </label>
-                @if (!string.IsNullOrEmpty(Error))
-                {
-                    <p class="error">@Error</p>
-                }
-                <button>Login</button>
-                <p>New user? <a href="/Account/Register">Register</a></p>
-            </form>
-    }
-    else
-    {
-            <EditForm Model="RegisterData" OnValidSubmit="Register" FormName="RegisterForm">
-                <DataAnnotationsValidator />
-                <h2>Register</h2>
-                <label>First Name:
-                    <InputText type="text" @bind-Value="RegisterData.FirstName" required placeholder="First Name"/>
-                </label>
-                <label>Last Name:
-                    <InputText type="text" @bind-Value="RegisterData.LastName" required placeholder="Last Name"/>
-                </label>
-                <label>Username:
-                    <InputText type="text" @bind-Value="RegisterData.Username" required placeholder="Username" />
-                </label>
-                <label>Email:
-                    <InputText type="email" @bind-Value="RegisterData.Email" required placeholder="Email"/>
-                </label>
-                <label>Password:
-                    <InputText type="password" @bind-Value="RegisterData.Password" required placeholder="Password"/>
-                </label>
-                <label>Confirm Password:
-                    <InputText type="password" @bind-Value="RegisterData.ConfirmPassword" required  placeholder="Confirm Password"/>
-                </label>
-                
-                @if (!string.IsNullOrEmpty(_error))
-                {
-                    <p class="error">@_error</p>
-                }
-                <button type="submit">Register</button>
-                <p>Already register? <a href="/Account/Login">Login</a></p>
-            </EditForm>
+<MudGrid Justify="Justify.Center" Class="mt-10">
+    <MudItem xs="12" sm="10" md="8" lg="6" xl="5">
+    <MudCard Class="pa-4" Elevation="4">
+        <MudStack Spacing="2">
+            @if (_isLogin)
+            {
+                <MudText Typo="Typo.h5" Class="mb-2">Login</MudText>
+                <form method="post" action="/Account/Login">
+                    <MudTextField T="string" Label="Email" InputType="InputType.Email" Name="Email" Required="true" Adornment="Adornment.Start"/>
+                    <MudTextField T="string" Label="Password" InputType="InputType.Password" Name="Password" Required="true" Adornment="Adornment.Start"/>
 
-    }
-</div>
+                    @if (!string.IsNullOrEmpty(Error))
+                    {
+                        <MudText Color="Color.Error">@Error</MudText>
+                    }
+
+                    <MudStack Direction="Row" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mt-4">
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Login</MudButton>
+                        <MudText>New user? <MudLink Href="/Account/Register">Register</MudLink></MudText>
+                    </MudStack>
+                </form>
+            }
+            else
+            {
+                <MudText Typo="Typo.h5" Class="mb-2">Register</MudText>
+                <EditForm Model="RegisterData" OnValidSubmit="Register" FormName="RegisterForm">
+                        <MudTextField T="string" @bind-Value="RegisterData.FirstName" Label="First Name" Required="true"/>
+                        <MudTextField T="string" @bind-Value="RegisterData.LastName" Label="Last Name" Required="true"/>
+                        <MudTextField T="string" @bind-Value="RegisterData.Username" Label="Username" Required="true"/>
+                        <MudTextField T="string" InputType="InputType.Email" @bind-Value="RegisterData.Email" Label="Email" Required="true"/>
+                        <MudTextField T="string" InputType="InputType.Password" @bind-Value="RegisterData.Password" Label="Password" Required="true"/>
+                        <MudTextField T="string" InputType="InputType.Password" @bind-Value="RegisterData.ConfirmPassword" Label="Confirm Password" Required="true"/>
+
+                        @if (!string.IsNullOrEmpty(_error))
+                        {
+                            <MudText Color="Color.Error">@_error</MudText>
+                        }
+
+                        <MudStack Direction="Row" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mt-4">
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Register</MudButton>
+                            <MudText>Already registered? <MudLink Href="/Account/Login">Login</MudLink></MudText>
+                        </MudStack>
+                </EditForm>
+            }
+        </MudStack>
+    </MudCard>
+    </MudItem>
+</MudGrid>
 @code {
     [Parameter]
     public string? Mode { get; set; }

@@ -10,7 +10,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FriendStuff.Features.Auth;
 
-public class AuthService(UserManager<User> userManager, SignInManager<User> signInManager, FriendStuffDbContext context) : IAuthService
+public class AuthService(UserManager<User> userManager, 
+    SignInManager<User> signInManager, 
+    IDbContextFactory<FriendStuffDbContext> contextFactory) : IAuthService
+
 {
     public async Task RegisterUser(RegisterDto registerDto)
     {
@@ -66,6 +69,8 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
 
     public async Task<UserInfoDto> GetUserInfo(string username)
     {
+        await using var context = await contextFactory.CreateDbContextAsync();
+        
         var user = await context.Users
             .Where(u => u.NormalizedUserName.Equals(username.Trim().ToUpperInvariant()))
             .Include(u => u.UserGroups)

@@ -10,44 +10,65 @@
 
 @rendermode InteractiveServer
 
-<h2 style="font-size: 2.2rem">Your Balance</h2>
-    <button type="button" @onclick="Calculate">Calculate Balance</button>
-    @if (_balancesWithUsers.Any())
-    {
-        @if (_balancesWithUsers.Any())
-        {
-            <ul>
-                @foreach (var (username, amount) in _balancesWithUsers)
+<MudGrid>
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" Class="mb-2">Your Balance</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Calculate">
+                Calculate Balance
+            </MudButton>
+
+            <MudList T="object" Class="mt-4">
+                @if (_balancesWithUsers.Any())
                 {
-                    switch (amount)
+                    @foreach (var (username, amount) in _balancesWithUsers)
                     {
-                        case < 0:
-                            <li><strong>@username</strong> owes you <strong>@Math.Abs(amount).ToString("0.00")€</strong></li>
-                            break;
-                        case > 0:
-                            <li>You owe <strong>@amount.ToString("0.00")€</strong> to <strong>@username</strong></li>
-                            break;
-                        case 0:
-                            <li>No debt</li>
-                            break;
+                        <MudListItem>
+                            <MudText Color="@(amount < 0 ? Color.Success : (amount > 0 ? Color.Error : Color.Default))">
+                                @switch (amount)
+                                {
+                                    case < 0:
+                                        @:<strong>@username</strong> owes you <strong>@Math.Abs(amount):0.00€</strong>
+                                        break;
+                                    case > 0:
+                                        @:You owe <strong>@amount:0.00€</strong> to <strong>@username</strong>
+                                        break;
+                                    default:
+                                        @:No debt with <strong>@username</strong> 
+                                        break;
+                                }
+                            </MudText>
+                        </MudListItem>
                     }
                 }
-            </ul>
-        }
-    }
+                else
+                {
+                    <MudText Class="mt-2">No balances yet. Click "Calculate Balance" to see results.</MudText>
+                }
+            </MudList>
+        </MudPaper>
+    </MudItem>
 
-    <h2>Add Refund</h2>
-    <div class="form-container">
-        <EditForm Model="_refundDto" FormName="RefundForm" OnValidSubmit="AddRefund">
-            <InputNumber @bind-Value="_refundDto.Amount" required placeholder="Amount" />
-            <InputText @bind-Value="_refundDto.PayerUsername" required placeholder="Username" />
-            @if (!string.IsNullOrEmpty(_error))
-            {
-                <p class="error">@_error</p>
-            }
-            <button type="submit">Add refund</button>
-        </EditForm>
-    </div>
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4 mt-4 mt-md-0">
+            <MudText Typo="Typo.h5" Class="mb-2">Add Refund</MudText>
+            <EditForm Model="_refundDto" OnValidSubmit="AddRefund">
+                <DataAnnotationsValidator />
+                <MudStack Spacing="2">
+                    <MudNumericField T="decimal" @bind-Value="_refundDto.Amount" Label="Amount" Required="true" Adornment="Adornment.Start" AdornmentText="€" />
+                    <MudTextField T="string" @bind-Value="_refundDto.PayerUsername" Label="Payer Username" Required="true" />
+
+                    @if (!string.IsNullOrEmpty(_error))
+                    {
+                        <MudAlert Severity="Severity.Error" Dense="true">@_error</MudAlert>
+                    }
+
+                    <MudButton Type="Submit" Variant="Variant.Filled" Color="Color.Secondary">Add Refund</MudButton>
+                </MudStack>
+            </EditForm>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
 @code {
     [Parameter]
@@ -55,11 +76,12 @@
 
     private List<GroupMemberDto?> _groupMembers = [];
     private readonly List<(string Username, decimal Balance)> _balancesWithUsers = [];
-    private RefundDto _refundDto = new RefundDto();
+    private RefundDto _refundDto = new();
     private string _error = string.Empty;
-    
+
     private async Task Calculate()
     {
+        _balancesWithUsers.Clear();
         if (UserInfo != null)
         {
             _groupMembers = UserInfo.UserGroups.SelectMany(u => u.GroupMembers.Distinct()).ToList();
@@ -94,11 +116,7 @@
                 NavigationManager.NavigateTo("/", forceLoad: true);
             }
         }
-        catch (ArgumentException e)
-        {
-            _error = e.Message;
-        }
-        catch (InvalidOperationException e)
+        catch (Exception e)
         {
             _error = e.Message;
         }

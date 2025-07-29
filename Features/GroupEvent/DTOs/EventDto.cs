@@ -18,10 +18,10 @@ public record class EventDto
     public string EventDescription { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Start date cannot be empty")]
-    public DateTime StartDate { get; set; }
+    public DateTime? StartDate { get; set; }
 
     [Required(ErrorMessage = "End date cannot be empty")]
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
     [Required(ErrorMessage = "Location name cannot be empty")]
     public string LocationName { get; set; } = string.Empty;

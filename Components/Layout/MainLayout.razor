@@ -10,13 +10,25 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 
-<HeaderComponent UserInfo="@UserInfo"></HeaderComponent>
+<MudThemeProvider IsDarkMode="true" />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-<CascadingValue Value="UserInfo" Name="UserInfo">
-    <main class="container">
-        @Body
-    </main>
-</CascadingValue>
+<HeaderComponent UserInfo="@UserInfo" />
+
+<MudLayout>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
+            <CascadingValue Value="UserInfo" Name="UserInfo">
+                @Body
+            </CascadingValue>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+        
+    
+
 
 @code {
     UserInfoDto? UserInfo { get; set; }

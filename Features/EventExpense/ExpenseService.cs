@@ -18,6 +18,10 @@ public class ExpenseService(FriendStuffDbContext context, UserManager<User> user
         .Where(e => e.NormalizeEventName.Equals(normalizeEventName))
         .FirstOrDefaultAsync() ?? throw new ArgumentException("Event not found");
 
+        if (expenseDto.Amount <= 0)
+        {
+            throw new ArgumentException("Amount invalid");
+        }
 
         Expense newExpense = new()
         {

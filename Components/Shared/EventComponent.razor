@@ -11,53 +11,93 @@
 
 @if (_event != null)
 {
-    <h2>@_event.EventName</h2>
-    <div class="form-container">
-        <EditForm Model="ExpenseDto" OnValidSubmit="AddExpense" FormName="ExpenseForm">
-            <InputNumber @bind-Value="ExpenseDto.Amount" placeholder="Amount" required  />
-            <InputText @bind-Value="ExpenseDto.ExpenseName" placeholder="Expense Name" required />
-            <div class="input-checkbox"> 
-                @foreach (var user in _selectableMembers)
+    <MudPaper Class="pa-4 mb-4">
+        <MudText Typo="Typo.h4">@_event.EventName</MudText>
+    </MudPaper>
+    <MudPaper Class="pa-4">
+        <EditForm Model="ExpenseDto" FormName="EventForm" OnValidSubmit="AddExpense">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudNumericField T="decimal" @bind-Value="ExpenseDto.Amount" Label="Amount" Required="true" RequiredError="Amount is required"/>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField T="string" @bind-Value="ExpenseDto.ExpenseName" Label="Expense Name" Required="true" RequiredError="Expense name is required"/>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.subtitle1" Class="mt-4 mb-2">Participants</MudText>
+                        @foreach (var user in _selectableMembers)
+                        {
+                            <MudCheckBox T="bool" Label="@user.Username" checked="@ExpenseDto.ParticipantUsername.Contains(user.Username)"
+                                         @onchange="@((e) => OnParticipantCheckboxChange(e, user.Username))" />                        }
+                </MudItem>
+                @if (!string.IsNullOrEmpty(_error))
                 {
-                    <input type="checkbox" 
-                           id="@($"checkbox-{user.Username}")"
-                           checked="@ExpenseDto.ParticipantUsername.Contains(user.Username)"
-                           @onchange="@((e) => OnParticipantCheckboxChange(e, user.Username))" />
-                    <label for="@($"checkbox-{user.Username}")">@user.Username</label>
-                    <br/>
+                    <MudItem xs="12">
+                        <MudText Color="Color.Error">@_error</MudText>
+                    </MudItem>
                 }
-            </div>
-            <button type="submit">Add Expense</button>
-        </EditForm>
-    </div>
-    <h3>Expenses</h3>
-    <ul class="expense-list">
-        @foreach (var expense in _group.GroupEvents.SelectMany(evt => evt.Expenses))
-        {
-            <li>Expense:
-                @expense.ExpenseName 
-                <p>Amount: @expense.Amount (@expense.PayerUsername)</p>
-                <p>Participants: 
-                    @foreach (var u in expense.ParticipantUsername)
+                <MudItem xs="12">
+                    @if (string.IsNullOrEmpty(_error))
                     {
-                        <span>@u&nbsp;</span>
+                        <MudText Color="Color.Error">@_error</MudText>
                     }
-                </p>
-            </li>
-        }
-    </ul>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="mt-4">
+                        Add Expense
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+    </MudPaper>
+
+    <MudDivider Class="my-6"/>
+
+    <MudText Typo="Typo.h5">Expenses</MudText>
+    @if (_group?.GroupEvents.SelectMany(evt => evt.Expenses).Any() == true)
+    {
+        <MudList T="object">
+            @foreach (var expense in _group.GroupEvents.SelectMany(evt => evt.Expenses))
+            {
+                <MudListItem>
+                    <MudPaper Class="pa-3 w-full">
+                        <MudText Typo="Typo.subtitle1">@expense.ExpenseName</MudText>
+                        <MudText Typo="Typo.body2">
+                            Amount: @expense.Amount€ — Payer: <strong>@expense.PayerUsername</strong>
+                        </MudText>
+                        <MudText Typo="Typo.body2">Participants:
+                            @if (expense.ParticipantUsername.Count > 0)
+                            {
+                                @foreach (var u in expense.ParticipantUsername)
+                                {
+                                    <span>@u&nbsp;</span>
+                                }
+                            }
+                            else
+                            {
+                                <span>No Participants</span>
+                            }
+                        </MudText>
+                    </MudPaper>
+                </MudListItem>
+            }
+        </MudList>
+    }
+
+    else
+    {
+        <MudText>No expenses found.</MudText>
+    }
 }
+
 
 @code {
     [Parameter] public string? GroupName { get; set; }
     [Parameter] public string? EventName { get; set; }
     [Parameter] public UserInfoDto? UserInfo { get; set; }
-
     private string? _error;
 
     private ExpenseDto ExpenseDto { get; set; } = new ExpenseDto();
     private List<GroupMemberDto> _selectableMembers = [];
-
+    
     private EventDto? _event;
     private GroupDto? _group;
 
@@ -74,6 +114,7 @@
             _selectableMembers = _group.GroupMembers
                 .Where(member => member.Username != UserInfo.Username).ToList();
         }
+        
     }
 
     private void OnParticipantCheckboxChange(ChangeEventArgs e, string username)
@@ -91,6 +132,7 @@
         }
     }
 
+    
     public async Task AddExpense()
     {
         try
@@ -108,8 +150,6 @@
         catch (ArgumentException e)
         {
             _error = e.Message;
-            Console.WriteLine($"Error adding expense: {_error}");
         }
     }
-
 }

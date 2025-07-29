@@ -6,38 +6,70 @@
 @inject IGroupMemberService GroupMemberService
 @inject NavigationManager NavigationManager
 
+@rendermode InteractiveServer
+
 @if (_group != null && _group.AdminUsername.Equals(UserInfo.Username))
 {
-    <div class="form-container">
-        <EditForm Model="UsernameDto" FormName="SearchUser" OnValidSubmit="SearchUser">
-            <DataAnnotationsValidator/>
-            <InputText @bind-Value="UsernameDto.Username" type="search" placeholder="Search User"/>
+    <MudPaper Class="pa-4" Elevation="3">
+        <EditForm Model="UsernameDto" FormName="GroupMemberForm" OnValidSubmit="SearchUser">
+            <MudText Typo="Typo.h6">Add Member</MudText>
+            <MudTextField @bind-Value="UsernameDto.Username"
+                          Placeholder="Search by username"
+                          Variant="Variant.Outlined"
+                          Immediate="true"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          For="@(() => UsernameDto.Username)" />
+
             @if (!string.IsNullOrEmpty(_error))
             {
-                <p class="error">@_error</p>
+                <MudText Color="Color.Error" Class="mt-2">@_error</MudText>
             }
-            <button>Search</button>
+
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" ButtonType="ButtonType.Submit" Class="mt-2">
+                Search
+            </MudButton>
+
             @if (_userFound != null)
             {
-                <p style="font-weight: bold; font-size: 1.1rem; margin: 10px 0;">@_userFound.Username
-                    <span>(@_userFound.FirstName @_userFound.LastName)</span>
-                    <button @onclick="AddMember">Add</button>
-                </p>
+                <MudPaper Elevation="3" Class="mt-2 mb-2 pa-2">
+                        <MudText Typo="Typo.subtitle1">@_userFound.Username</MudText>
+                        <MudText Typo="Typo.caption">
+                            @_userFound.FirstName @_userFound.LastName
+                        </MudText>
+                    <MudButton Class="ml-2" Color="Color.Success" OnClick="@AddMember">
+                        Add
+                    </MudButton>
+                </MudPaper>
             }
         </EditForm>
-    </div>
+    </MudPaper>
 }
-<ul>
+
+<MudList T="object" Dense="false" Class="my-4">
     @foreach (var member in _groupMember)
     {
-        <li>@member.Username <span>(@member.MemberRole)</span> - <span>Join: @member.JoinDate.ToString("dd/MM/yyyy")</span>
-            @if (@member.MemberRole == MemberRole.Member)
+        <MudListItem Class="py-2">
+            <MudListItem>
+                <MudText Typo="Typo.subtitle1">@member.Username</MudText>
+                <MudText Typo="Typo.caption">
+                    Role: <MudChip Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small">@member.MemberRole</MudChip>
+                    <span class="ml-2">Joined: @member.JoinDate.ToString("dd/MM/yyyy")</span>
+                </MudText>
+            </MudListItem>
+
+            @if (member.MemberRole == MemberRole.Member)
             {
-                <button class="btn-remove-member" @onclick="() => RemoveMember(member.Username)">Remove</button>
+                <MudSpacer />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                               Color="Color.Error"
+                               OnClick="@(() => RemoveMember(member.Username))"
+                               Tooltip="Remove member" />
             }
-        </li>
+        </MudListItem>
+        <MudDivider />
     }
-</ul>
+</MudList>
 
 @code {
     [Parameter] public required UserInfoDto UserInfo { get; set; }

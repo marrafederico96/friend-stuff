@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using FriendStuff.Data;
 using FriendStuff.Domain.Entities;
@@ -47,8 +48,8 @@ public partial class EventService(FriendStuffDbContext context, UserManager<User
         {
             Event newEvent = new()
             {
-                EndDate = DateTime.SpecifyKind(eventDto.EndDate, DateTimeKind.Utc),
-                StartDate =DateTime.SpecifyKind(eventDto.StartDate, DateTimeKind.Utc),
+                EndDate = DateTime.SpecifyKind(eventDto.EndDate.Value, DateTimeKind.Utc),
+                StartDate =DateTime.SpecifyKind(eventDto.StartDate.Value, DateTimeKind.Utc),
                 NormalizeEventName = NormalizeEventName(eventDto.EventName),
                 EventDescription = eventDto.EventDescription,
                 EventName = eventDto.EventName,
@@ -72,9 +73,9 @@ public partial class EventService(FriendStuffDbContext context, UserManager<User
 
             Event newEvent = new()
             {
-                EndDate = DateTime.SpecifyKind(eventDto.EndDate, DateTimeKind.Utc),
+                EndDate = DateTime.SpecifyKind(eventDto.EndDate.Value, DateTimeKind.Utc),
                 NormalizeEventName = NormalizeEventName(eventDto.EventName),
-                StartDate = DateTime.SpecifyKind(eventDto.StartDate, DateTimeKind.Utc),
+                StartDate = DateTime.SpecifyKind(eventDto.StartDate.Value, DateTimeKind.Utc),
                 EventDescription = eventDto.EventDescription,
                 EventName = eventDto.EventName,
                 GroupId = group.GroupId,
