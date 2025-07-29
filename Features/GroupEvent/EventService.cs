@@ -72,9 +72,9 @@ public partial class EventService(FriendStuffDbContext context, UserManager<User
 
             Event newEvent = new()
             {
-                EndDate = eventDto.EndDate,
+                EndDate = DateTime.SpecifyKind(eventDto.EndDate, DateTimeKind.Utc),
                 NormalizeEventName = NormalizeEventName(eventDto.EventName),
-                StartDate = eventDto.StartDate,
+                StartDate = DateTime.SpecifyKind(eventDto.StartDate, DateTimeKind.Utc),
                 EventDescription = eventDto.EventDescription,
                 EventName = eventDto.EventName,
                 GroupId = group.GroupId,
