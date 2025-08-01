@@ -62,11 +62,8 @@ public partial class EventService(FriendStuffDbContext context, UserManager<User
         {
             Location newLocation = new()
             {
-                City = eventDto.City,
                 NormalizeLocationName = eventDto.LocationName.TrimEnd().TrimStart().ToLowerInvariant(),
                 LocationName = eventDto.LocationName,
-                StreetName = eventDto.StreetName,
-                StreetNumber = eventDto.StreetNumber
             };
             await context.Locations.AddAsync(newLocation);
             await context.SaveChangesAsync();
@@ -100,9 +97,6 @@ public partial class EventService(FriendStuffDbContext context, UserManager<User
                 NormalizedEventName = e.NormalizeEventName,
                 StartDate = e.StartDate,
                 LocationName = e.Location != null ? e.Location.LocationName : string.Empty,
-                City = e.Location != null ? e.Location.City : string.Empty,
-                StreetName = e.Location != null ? e.Location.StreetName: string.Empty,
-                StreetNumber = e.Location != null ? e.Location.StreetNumber: string.Empty,
                 EventDescription = e.EventDescription,
             })
             .ToListAsync();

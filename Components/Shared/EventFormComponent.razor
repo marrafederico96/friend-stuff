@@ -21,7 +21,7 @@
                         <MudCardContent>
                             <MudText Typo="Typo.h6">@evt.EventName</MudText>
                             <MudText Typo="Typo.body2">@evt.LocationName</MudText>
-                            <MudText Typo="Typo.caption">@($"Start {evt.StartDate:dd-MM-yyyy} End {evt.EndDate:dd-MM-yyyy}")</MudText>                       
+                            <MudText Typo="Typo.caption">@($"{evt.StartDate:dd-MM-yyyy} - {evt.EndDate:dd-MM-yyyy}")</MudText>                       
                             </MudCardContent>
                         <MudCardActions>
                             <MudLink Href="@($"/Group/{GroupName}/{GenerateEventHref(evt.NormalizedEventName)}")">

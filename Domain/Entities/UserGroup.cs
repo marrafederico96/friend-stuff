@@ -5,7 +5,6 @@ namespace FriendStuff.Domain.Entities;
 
 public class UserGroup
 {
-
     [Key]
     public Guid GroupId { get; init; }
 

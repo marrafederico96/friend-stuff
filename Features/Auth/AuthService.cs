@@ -111,9 +111,6 @@ public class AuthService(UserManager<User> userManager,
                                     StartDate = e.StartDate,
                                     LocationName = e.Location.LocationName,
                                     EventDescription = e.EventDescription,
-                                    City = e.Location.City,
-                                    StreetName = e.Location.StreetName,
-                                    StreetNumber = e.Location.StreetNumber,
                                     Expenses = e.Expenses.Select(ex => new ExpenseDto
                                     {
                                         ParticipantUsername = ex.Participants.Select(ex => ex.Participant.UserName).ToList(),
