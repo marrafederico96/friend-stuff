@@ -17,17 +17,16 @@
             @foreach (var evt in _eventDto)
             {
                 <MudItem xs="12">
-                    <MudCard Class="h-full hover:shadow-md transition-shadow">
+                <MudCard Class="h-full hover:shadow-md transition-shadow">
+                    <MudLink Style="text-decoration: none;" Href="@($"/Group/{GroupName}/{GenerateEventHref(evt.NormalizedEventName)}")">
                         <MudCardContent>
-                            <MudText Typo="Typo.h6">@evt.EventName</MudText>
-                            <MudText Typo="Typo.body2">@evt.LocationName</MudText>
-                            <MudText Typo="Typo.caption">@($"{evt.StartDate:dd-MM-yyyy} - {evt.EndDate:dd-MM-yyyy}")</MudText>                       
+                            <MudText Style=" color: #c2c2c5" Typo="Typo.h6">@evt.EventName</MudText>
+                            <MudText Style=" color: #c2c2c5" Typo="Typo.body2">@evt.LocationName</MudText>
+                            <MudText Style=" color: #c2c2c5" Typo="Typo.caption">@($"{evt.StartDate:dd-MM-yyyy} - {evt.EndDate:dd-MM-yyyy}")</MudText>                       
                             </MudCardContent>
-                        <MudCardActions>
-                            <MudLink Href="@($"/Group/{GroupName}/{GenerateEventHref(evt.NormalizedEventName)}")">
-                                View
-                            </MudLink>
-                        </MudCardActions>
+                    <MudCardActions>
+                    </MudCardActions>
+                    </MudLink>
                     </MudCard>
                 </MudItem>
             }
