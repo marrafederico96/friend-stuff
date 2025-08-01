@@ -51,21 +51,22 @@
     {
         <MudListItem Class="py-2">
             <MudListItem>
-                <MudText Typo="Typo.subtitle1">@member.Username</MudText>
+                <MudText Typo="Typo.subtitle1">@member.Username
+                @if (member.MemberRole == MemberRole.Member && _group.AdminUsername.Equals(UserInfo.Username)
+                    )
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Error"
+                                   OnClick="@(() => RemoveMember(member.Username))"
+                                   Tooltip="Remove member" />
+                }</MudText>
                 <MudText Typo="Typo.caption">
                     Role: <MudChip Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small">@member.MemberRole</MudChip>
                     <span class="ml-2">Joined: @member.JoinDate.ToString("dd/MM/yyyy")</span>
                 </MudText>
             </MudListItem>
 
-            @if (member.MemberRole == MemberRole.Member)
-            {
-                <MudSpacer />
-                <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                               Color="Color.Error"
-                               OnClick="@(() => RemoveMember(member.Username))"
-                               Tooltip="Remove member" />
-            }
+
         </MudListItem>
         <MudDivider />
     }
@@ -87,6 +88,7 @@
             .FirstOrDefault(g => g.NormalizeGroupName.Equals(GroupName));
         if (_group != null) _groupMember = _group.GroupMembers;
         _error = string.Empty;
+        _userFound = null;
     }
 
     private async Task SearchUser()
@@ -95,6 +97,7 @@
         {
         _userFound = await GroupMemberService.SearchUser(UsernameDto.Username);
         UsernameDto = new UsernameDto();
+        _error = string.Empty;
         }
         catch (ArgumentException e)
         {
@@ -125,10 +128,6 @@
             if (GroupName != null && _group != null)
             {
                 await GroupMemberService.RemoveMember(memberUsername, GroupName, _group.AdminUsername);
-                if (!memberUsername.Equals(_group.AdminUsername))
-                {
-                    NavigationManager.NavigateTo("/", forceLoad: true);
-                }
                 NavigationManager.Refresh();
             }
         }
