@@ -1,4 +1,4 @@
-# 📦 Friend Stuff
+# 📦 Friend Stuff Blazor
 
 **Friend Stuff** è una web app fullstack sviluppata in **C# con Blazor** che consente di organizzare eventi tra amici, gestire gruppi, dividere le spese sostenute e calcolare il bilancio personale.
 
